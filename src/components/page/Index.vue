@@ -58,13 +58,14 @@
   .page-container{
     display: flex;
     justify-content: center;
-    width: inherit;
+    width: 750px;
+    padding: 10px;
     height: inherit;
   }
   .index-container{
     display: flex;
     flex-direction: column;
-    flex:0 1 700px;
+    flex:0 1 750px;
     width: inherit;
     height: inherit;
   }
@@ -73,6 +74,9 @@
     letter-spacing: 5px;
     cursor: pointer;
     text-align: center;
+  }
+  .index-header>a{
+    font-size: 20px;
   }
   .index-links{
     margin-top: 20px;
@@ -89,11 +93,11 @@
     width: 15px;
     height: 15px;
   }
-  @media screen and (max-width: 700px) {
+  /*@media screen and (max-width: 700px) {
     .index-main{
       margin: 10px;
     }
-  }
+  }*/
 
 </style>
 

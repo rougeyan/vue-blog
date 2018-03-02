@@ -10,20 +10,72 @@ export default {
 }
 </script>
 
-<style>
-  html,body,#app{
-    height: 100%;
-    width: 100%;
+<style type="text/postcss">
+  html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    box-sizing: border-box;
   }
   body {
-    font-size: 16px;
-    word-spacing: 1px;
-    color: #666;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  /*规定边框盒模型,并且从父元素继承,before,after伪类同理*/
+  * {
+    box-sizing: inherit;
+    &:before,
+    &:after {
+       box-sizing: inherit;
+     }
+  }
+  img {
+    width: 100%;
+    height: auto;
+    /*把元素的顶端与行中最高元素的顶端对齐*/
+    vertical-align: top;
+    /*在img中content会引起部分浏览器下, 图片不显示,这个时候需要添加此项*/
+    content: normal !important;
+  }
+  /*实现横纵比*/
+  /*[attribute] 选择器用于选取带有指定属性的元素。*/
+  [aspectratio] {
+    position: relative;
+  }
+  [aspectratio]::before {
+    content: '';
+    display: block;
+    width: 1px;
+    margin-left: -1px;
+    height: 0;
+  }
+
+  [aspectratio-content] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /*flex布局,width为psd大小*/
+  [flexContainer] {
+    display: flex;
+    width: 750px;
+  }
+  .block {
+    margin-top: 15px;
+  }
+  ul,li {
+    list-style: none outside none;
     margin: 0;
     padding: 0;
   }
-  img {
-    border: none;
+  figure {
+    display: block;
+    margin: 0;
   }
   a {
     color: #666;
@@ -38,7 +90,6 @@ export default {
   h5,
   h6 {
     font-family: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, sans-serif;
-    font-weight: 400;
     color: #444;
   }
   textarea {
@@ -49,10 +100,7 @@ export default {
     font-size: 14px;
     font-family: 'Monaco', courier, monospace;
   }
-
-  .gutter pre {
-    color: #999;
-  }
+  /*markdown-css*/
   pre {
     color: #525252;
   }
@@ -268,19 +316,7 @@ export default {
     display: block;
     max-width: 100%;
   }
-
-  .show-comments {
-    font-family: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, sans-serif;
-    text-align: center;
-  }
-  .show-comments a {
-    color: #999;
-    cursor: pointer;
-  }
-  .show-comments a:hover {
-    color: #666;
-  }
-  @media screen and (max-width: 420px) {
+  /*@media screen and (max-width: 420px) {
     .index-main {
       margin-top: 32px;
     }
@@ -313,7 +349,7 @@ export default {
       font-size: 14px;
       color: #444;
     }
-  }
+  }*/
 
 
 </style>

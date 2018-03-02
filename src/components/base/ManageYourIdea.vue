@@ -30,7 +30,7 @@ export default{
     return{
       rules:{
         blogTitle:[{ required: true, message: '请输入文章标题', trigger: 'blur' },
-          { min: 4, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }]
+          { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }]
       },
       idea:{
         blogId:'',

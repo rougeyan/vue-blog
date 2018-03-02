@@ -71,11 +71,11 @@ export default{
   .title:hover{
     color: #f33;
   }
-  @media screen and (max-width: 420px) {
+  /*@media screen and (max-width: 420px) {
     .list>li{
       margin: 20px 0 20px;
     }
-  }
+  }*/
 </style>
 
 

@@ -5,9 +5,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
     <title>vue-blog</title>
     <link href="https://cdn.bootcss.com/element-ui/2.0.11/theme-chalk/index.css" rel="stylesheet">
+    <script src="//g.alicdn.com/fdilab/lib3rd/viewport-units-buggyfill/0.6.2/??viewport-units-buggyfill.hacks.min.js,viewport-units-buggyfill.min.js"></script>
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      window.onload = function () {
+        window.viewportUnitsBuggyfill.init({
+          hacks: window.viewportUnitsBuggyfillHacks
+        });
+      }
+    </script>
     <script src="https://cdn.bootcss.com/lodash.js/4.16.0/lodash.min.js"></script>
     <script src="https://cdn.bootcss.com/vue/2.5.2/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.0.11/index.js"></script>
