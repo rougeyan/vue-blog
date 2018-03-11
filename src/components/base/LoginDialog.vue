@@ -27,7 +27,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetters,mapActions} from 'vuex'
+import {mapActions} from 'vuex'
 
 export default{
   name:'LoginDialog',

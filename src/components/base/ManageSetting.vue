@@ -14,14 +14,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetters,mapActions} from 'vuex'
+import {mapActions} from 'vuex'
 export default{
   name:'ManageSetting',
   props:['user','users'],
-  data(){
-    return{
-    }
-  },
 
   methods:{
     ...mapActions([

@@ -4,7 +4,7 @@
       <blog-index-header :user="user" :users="users" ></blog-index-header>
       <blog-index-links @openDialog="openDialog" :user="user" :users="users"></blog-index-links>
       <transition name="move" mode="out-in">
-        <router-view :users="users"></router-view>
+        <router-view :users="users" :currentBlogList="currentBlogList"></router-view>
       </transition>
       <login-dialog :openLoginDialog="openLoginDialog" @closeDialog="closeDialog"></login-dialog>
     </div>
@@ -24,16 +24,12 @@
       'blog-index-links':BlogLinks,
       'login-dialog':LoginDialog
     },
-    data(){
-      return{
-
-      }
-    },
     computed:{
       ...mapGetters([
         'openLoginDialog',
         'loginStatus',
-        'users'
+        'users',
+        'currentBlogList'
       ])
     },
     methods:{

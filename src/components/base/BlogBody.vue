@@ -12,21 +12,11 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {getStorage,formatDateEng} from '../../lib/lib'
-import { mapActions ,mapGetters} from 'vuex'
+import {formatDateEng} from '../../lib/lib'
+import { mapActions } from 'vuex'
 export default{
   name:'BlogBody',
-  props:['user','users'],
-  data(){
-    return{
-
-    }
-  },
-  computed:{
-    ...mapGetters([
-      'currentBlogList'
-    ])
-  },
+  props:['user','users','currentBlogList'],
   methods:{
     ...mapActions([
       'getCurrentBlogList'

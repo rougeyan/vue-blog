@@ -13,10 +13,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapActions ,mapGetters} from 'vuex'
-  import {formatDateEng,getStorage} from '../../lib/lib'
+  import { mapActions } from 'vuex'
+  import {formatDateEng} from '../../lib/lib'
   export default{
-    props:['id','user','users'],
+    props:['id','user','users','currentBlogList'],
     data(){
       return{
         idea:{
@@ -30,7 +30,8 @@
     },
     watch: {
       // 如果路由有变化，会再次执行该方法
-      '$route': 'getIdea'
+      '$route': 'getIdea',
+      'currentBlogList':'filterIdea'
     },
     computed: {
       compiledMarkdown: function () {
@@ -38,13 +39,22 @@
       },
       formatDate(){
         return formatDateEng(this.idea.blogDate)
-      },
-      ...mapGetters([
-        'currentBlogList'
-      ])
+      }
     },
     methods: {
+      ...mapActions([
+        'getCurrentBlogList'
+      ]),
       getIdea(){
+        //如果vuex中有数据,直接提取 如果没有数据 发出请求
+        //再watch currentBlogList的变化
+        if(this.currentBlogList.length>1){
+          this.filterIdea()
+        }else{
+          this.getCurrentBlogList({userName:this.user,type:'public',currentPage:1})
+        }
+      },
+      filterIdea(){
         this.currentBlogList.forEach((item,index,arr)=>{
           if(this.id === item.blogDate){
             this.idea = Object.assign({},item,{nextBlogDate:this.hasSiblings(arr)(index+1)('blogDate'),lastBlogDate:this.hasSiblings(arr)(index-1)('blogDate')})

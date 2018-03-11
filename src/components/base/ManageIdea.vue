@@ -38,7 +38,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {getStorage,formatDateEng} from '../../lib/lib'
   import {mapActions,mapGetters} from 'vuex'
   export default{
     name:'ManageIdea',

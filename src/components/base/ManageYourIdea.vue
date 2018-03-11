@@ -24,6 +24,8 @@
 <script type="text/ecmascript-6">
 import {mapActions,mapGetters} from 'vuex'
 import {formatDate} from '../../lib/lib'
+import debounce from 'lodash/debounce'
+
 export default{
   props:['blogDate','users'],
   data(){
@@ -54,7 +56,7 @@ export default{
       'createNewIdea',
       'updateIdea',
     ]),
-    update:_.debounce(function (e) {
+    update:debounce(function (e) {
       this.idea.blogContent = e.target.value
     }, 300),
     _send(){

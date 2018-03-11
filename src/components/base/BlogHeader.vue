@@ -8,11 +8,6 @@
   export default{
     name:'BlogHeader',
     props:['user','users'],
-    data(){
-      return{
-
-      }
-    }
   }
 </script>
 
