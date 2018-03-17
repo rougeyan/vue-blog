@@ -43,7 +43,7 @@ export default{
 }
 .manage-right{
   margin: 20px 0 0 50px;
-  flex-basis: 700px;
+  flex-basis: 900px;
 }
 @media screen and (max-width: 420px) {
   .manage-right{

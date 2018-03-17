@@ -31,7 +31,6 @@
     <el-pagination
       style="float: right;margin-top: 5vh"
       layout="prev, pager, next"
-      :total="50"
       @current-change="_changePage">
     </el-pagination>
   </div>
@@ -45,7 +44,8 @@
     data(){
       return{
         isShow:window.innerWidth<420,
-        currentPage:2
+        pgN:1,
+        pgS:10
       }
     },
     computed:{
@@ -58,11 +58,11 @@
         'getIdeaList',
         'deleteIdea'
       ]),
-      _changePage(currentPage){
-        this.getIdeaList({userName:this.users.userName,type:'all',currentPage})
+      _changePage(pgN){
+        this.getIdeaList({userName:this.users.userName,type:'all',pgN:pgN,pgS:this.pgS})
       },
       _getIdeaList(){
-        this.getIdeaList({userName:this.users.userName,type:'all'})
+        this.getIdeaList({userName:this.users.userName,type:'all',pgN:this.pgN,pgS:this.pgS})
       },
 
       _deleteIdea(id){

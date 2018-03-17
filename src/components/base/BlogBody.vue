@@ -1,5 +1,9 @@
 <template>
-  <div class="index-main">
+  <div class="index-main"
+       v-infinite-scroll="loadMore"
+       infinite-scroll-disabled="busy"
+       infinite-scroll-distance="10"
+  >
     <ul class="list">
       <li v-for="n in currentBlogList">
         <span class="date">{{formatDate(n.blogDate)}}</span>
@@ -12,27 +16,50 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {formatDateEng} from '../../lib/lib'
-import { mapActions } from 'vuex'
+import {formatDateEng,throttle} from '../../lib/lib'
+import { mapActions,mapMutations } from 'vuex'
 export default{
   name:'BlogBody',
   props:['user','users','currentBlogList'],
-  methods:{
-    ...mapActions([
-      'getCurrentBlogList'
-    ]),
-
-    formatDate(value){
-      return formatDateEng(value)
+  data(){
+    return{
+      busy:false,
+      pgN:1,
+      pgS:6,
     }
   },
+  methods:{
+    ...mapActions([
+      'getCurrentBlogList',
+      'getMoreBlog'
+    ]),
+    ...mapMutations([
+      'LOAD_MORE'
+    ]),
+    formatDate(value){
+      return formatDateEng(value)
+    },
+    loadMore(){
+      this.busy = true
+      this.pgN++
+      this.getMoreBlog({userName:this.user,type:'public',pgN:this.pgN,pgS:this.pgS}).then((res)=>{
+        if(res==='gg'){
+          this.busy = true
+        }
+      })
+      this.busy = false
+    },
+  },
   created(){
-    this.getCurrentBlogList({userName:this.user,type:'public',currentPage:1})
+    this.getCurrentBlogList({userName:this.user,type:'public',pgN:1,pgS:this.pgS})
   }
 }
 </script>
 
 <style scoped>
+  .index-main{
+    min-height: 800px;
+  }
   .list{
     display: flex;
     flex-direction: column;

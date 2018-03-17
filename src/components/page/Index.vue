@@ -19,6 +19,7 @@
   export default{
     name:'index',
     props:['user'],
+
     components:{
       'blog-index-header':BlogHeader,
       'blog-index-links':BlogLinks,
@@ -40,7 +41,7 @@
         if(!this.loginStatus){
           this.OPEN_LOGIN_DIALOG(true)
         }else{
-          this.$router.push({path:`/${this.users.userName}/manage`})
+          this.$router.push(`/${this.users.userName}/manage`)
         }
       },
       closeDialog(){

@@ -28,3 +28,5 @@ export const REQUEST_ERR  = 'REQUEST_ERR'*/
 export const REDIRECT_TO = 'REDIRECT_TO'
 
 export const  BACK_INDEX =  'BACK_INDEX'
+
+export const LOAD_MORE = 'LOAD_MORE'

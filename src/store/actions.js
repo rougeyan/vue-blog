@@ -9,6 +9,16 @@ export const getCurrentBlogList = function({commit ,state},data){
     }
   })
 }
+/*加载更多*/
+export async function getMoreBlog({commit,state},data){
+  let res = await apiManage.getIdeaList(data)
+  if(res.errno===0){
+    commit(types.LOAD_MORE,res.res)
+  }
+  if(res.res.length<data.pgS){
+    return 'gg'
+  }
+}
 /*登录*/
 export const login = function({commit,state},data){
   apiManage.checkUser(data).then((res)=>{

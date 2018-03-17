@@ -25,6 +25,12 @@ const response = function(errno=0,res='',msg=''){
     msg
   }
 }
+//分页
+const getPage = (pgN,pgS,arr)=>arr.slice((pgN-1)*pgS).slice(0,pgS)
+
+/*function getPage(pgN,pgS,arr){
+  return  arr.filter(item=>item.blogType==='public').slice((pgN-1)*pgS).slice(0,pgS)
+}*/
 
 const _Loginfilter = {'userPwd':0,'__v':0}
 
@@ -145,25 +151,16 @@ router.post('/createNewIdea',function(req,res){
 *
 * */
 router.post('/getIdeaList',function (req,res) {
-/*  const pageSize = 2
-  const {userName,type,currentPage}  = req.body
-  let params = {}
-  if(type!=='all'){
-    params={'blogList.$.blogType':'public'}
-  }*/
-  /*.exec((err,doc)=>{
-   if(err){
-   return res.json(response(1,'','该用户没有文章'))
-   }else{
-   return res.json(response(0,doc,''))
-   }
-   })*/
   if(1){//校验通过
     users.findOne({'userName':req.body.userName}).then(function(doc){
       if(doc){
-        let data = doc.blogList.filter((item)=>item.blogType==='public')
+
         if(req.body.type==='all'){
-          return res.json(response(0,doc.blogList,''))
+          return res.json(response(0,getPage(req.body.pgN,req.body.pgS,doc.blogList),''))
+        }
+        if(req.body.type==='public'){
+          let data = doc.blogList.filter((item)=>item.blogType==='public')
+          return res.json(response(0,getPage(req.body.pgN,req.body.pgS,data),''))
         }
         return res.json(response(0,data,''))
       }else{

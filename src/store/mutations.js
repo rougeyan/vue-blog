@@ -11,10 +11,15 @@ const mutations = {
   [types.SET_CURRENT_BLOG_LIST](state,data){
     state.currentBlogList = data
   },
+  /*加载更多*/
+  [types.LOAD_MORE](state,data){
+    state.currentBlogList = state.currentBlogList.concat(data)
+  },
   /*设置users信息*/
   [types.SET_USER](state,data){
     state.users = data
   },
+
   /*注销*/
   [types.LOG_OUT](state){
     const initState = state.initState()
