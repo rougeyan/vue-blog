@@ -1,10 +1,9 @@
 <template>
-  <div class="index-main"
-       v-infinite-scroll="loadMore"
-       infinite-scroll-disabled="busy"
-       infinite-scroll-distance="10"
-  >
-    <ul class="list">
+  <div class="index-main">
+    <ul class="list"
+        v-infinite-scroll="loadMore"
+        infinite-scroll-disabled="busy"
+        infinite-scroll-distance="10">
       <li v-for="n in currentBlogList">
         <span class="date">{{formatDate(n.blogDate)}}</span>
         <span class="title">
@@ -25,7 +24,7 @@ export default{
     return{
       busy:false,
       pgN:1,
-      pgS:6,
+      pgS:8,
     }
   },
   methods:{
@@ -40,14 +39,13 @@ export default{
       return formatDateEng(value)
     },
     loadMore(){
-      this.busy = true
-      this.pgN++
-      this.getMoreBlog({userName:this.user,type:'public',pgN:this.pgN,pgS:this.pgS}).then((res)=>{
-        if(res==='gg'){
-          this.busy = true
-        }
-      })
-      this.busy = false
+      async function getNext(){
+        this.busy = true
+        this.pgN++
+        let res = await this.getMoreBlog({userName:this.user,type:'public',pgN:this.pgN,pgS:this.pgS})
+        res==='gg'?this.busy=true:this.busy=false
+      }
+      getNext.bind(this)()
     },
   },
   created(){
@@ -58,7 +56,7 @@ export default{
 
 <style scoped>
   .index-main{
-    min-height: 800px;
+    min-height:900px
   }
   .list{
     display: flex;
@@ -91,6 +89,9 @@ export default{
   @media screen and (max-width: 420px) {
     .list>li{
       margin: 20px 0 20px;
+    }
+    .title{
+      font-size: 14px
     }
   }
 </style>

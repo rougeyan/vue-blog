@@ -6,6 +6,8 @@ export const getCurrentBlogList = function({commit ,state},data){
   apiManage.getIdeaList(data).then((res)=>{
     if(res.errno===0){
       commit(types.SET_CURRENT_BLOG_LIST,res.res)
+    }else{//如果该用户没有文章,重定向到Calabash
+      commit(types.REDIRECT_TO,`/Calabash`)
     }
   })
 }

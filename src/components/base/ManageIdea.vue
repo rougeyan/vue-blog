@@ -4,6 +4,7 @@
       <el-table-column type="expand" v-if="isShow">
         <template slot-scope="scope">
           <el-button type="primary" @click="changeIdea(scope.row.blogDate)">修改</el-button>
+          <i class="font0"></i>
           <el-button type="danger" @click="_deleteIdea(scope.row.blogDate)">删除</el-button>
         </template>
       </el-table-column>
@@ -24,6 +25,7 @@
         v-if="!isShow">
         <template slot-scope="scope">
           <el-button type="primary" @click="changeIdea(scope.row.blogDate)">修改</el-button>
+          <i class="font0"></i>
           <el-button type="danger" @click="_deleteIdea(scope.row.blogDate)">删除</el-button>
         </template>
       </el-table-column>

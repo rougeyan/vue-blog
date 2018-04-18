@@ -2,8 +2,8 @@
   <div class="index-main">
     <div class="post">
       <h1>{{idea.blogTitle}}</h1>
-      <h3 class="date" v-text="formatDate"></h3>
-      <div v-html="compiledMarkdown" class="content"></div>
+      <h3 class="date" v-text="formatDate"/>
+      <div v-html="compiledMarkdown" class="markdown-body"></div>
     </div>
     <div class="operator">
       <a id="newer" class="blog-nav" @click.prevent="openOtherBlogs(idea.lastBlogDate)">&nbsp;&lt;上一篇</a>
@@ -13,25 +13,13 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapActions } from 'vuex'
-  import {formatDateEng} from '../../lib/lib'
+  import { mapActions ,mapGetters} from 'vuex'
+  import {formatDateEng,formatDate} from '../../lib/lib'
   export default{
     props:['id','user','users','currentBlogList'],
-    data(){
-      return{
-        idea:{
-          blogTitle:'',
-          blogContent:'',
-          blogDate:'',
-          nextBlogDate:'',
-          lastBlogDate:''
-        },
-      }
-    },
     watch: {
       // 如果路由有变化，会再次执行该方法
-      '$route': 'getIdea',
-      'currentBlogList':'filterIdea'
+      '$route': '_getIdea'
     },
     computed: {
       compiledMarkdown: function () {
@@ -39,28 +27,18 @@
       },
       formatDate(){
         return formatDateEng(this.idea.blogDate)
-      }
+      },
+      ...mapGetters({idea:'currentBlog'})
     },
     methods: {
       ...mapActions([
-        'getCurrentBlogList'
+        'getCurrentBlogList',
+        'getIdea'
       ]),
-      getIdea(){
-        //如果vuex中有数据,直接提取 如果没有数据 发出请求
-        //再watch currentBlogList的变化
-        if(this.currentBlogList.length>1){
-          this.filterIdea()
-        }else{
-          this.getCurrentBlogList({userName:this.user,type:'public',currentPage:1})
-        }
+      _getIdea(){
+        this.getIdea({userName:this.user,blogDate:this.id})
       },
-      filterIdea(){
-        this.currentBlogList.forEach((item,index,arr)=>{
-          if(this.id === item.blogDate){
-            this.idea = Object.assign({},item,{nextBlogDate:this.hasSiblings(arr)(index+1)('blogDate'),lastBlogDate:this.hasSiblings(arr)(index-1)('blogDate')})
-          }
-        })
-      },
+
       hasSiblings(arr){
         return index=>property=>arr[index]?arr[index][property]:'0'
       },
@@ -68,17 +46,20 @@
         if(value && value!=='0'){
           this.$router.push(`${value}`)
         }else{
-          this.$message.info('没有啦！')
+          this.$message.info('暂不可用！')
         }
       }
     },
     created(){
-      this.getIdea()
+      this._getIdea()
     }
   }
 </script>
 
 <style>
+  .markdown-body{
+    max-width: 950px;
+  }
   .blog-nav {
     position: fixed;
     bottom: 20px;

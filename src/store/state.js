@@ -1,5 +1,13 @@
 const initState = {
   //当前所在的博文列表,用于实现上一篇,下一篇
+  currentBlog:{
+    blogTitle:'',
+    blogDate:'',
+    blogContent:'',
+    blogType:'',
+    nextBlogDate:'',
+    lastBlogDate:''
+  },
   currentBlogList:[],
   //当前登录状态
   loginStatus:false,
@@ -13,7 +21,6 @@ const initState = {
       weibo:'https://weibo.com/'
     },
     blogList:[{
-      blogId:'',
       blogTitle:'',
       blogDate:'',
       blogContent:'',

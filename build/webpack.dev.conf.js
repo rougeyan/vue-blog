@@ -55,7 +55,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      favicon:'src/assets/logo.png',
+      favicon:'src/assets/calabash.png',
       inject: true
     }),
     // copy custom static assets

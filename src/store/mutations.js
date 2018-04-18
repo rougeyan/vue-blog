@@ -59,7 +59,7 @@ const mutations = {
   },
   /*查询某一篇博客 */
   [types.GET_IDEA](state,data){
-    //报废嗷
+    state.currentBlog = {...data}
   },
   /*获取用户信息*/
   [types.GET_USER_INFO](state,data){

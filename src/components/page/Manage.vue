@@ -37,22 +37,19 @@ export default{
   width: 100%;
 }
 .manage-left{
-  flex-basis: 200px;
   height: 100%;
   border-right: 1px solid #c9c9c9;
 }
 .manage-right{
-  margin: 20px 0 0 50px;
-  flex-basis: 900px;
+  margin: 20px 0 0 30px;
+  flex:1 1 900px;
 }
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 480px) {
   .manage-right{
     margin: 10px 0 0 10px;
-    flex-basis: 100%;
+    flex:0 0 100%
   }
-  .manage-left{
-    flex-basis: 64px;
-  }
+
 }
 </style>
 

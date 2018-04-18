@@ -2,6 +2,8 @@
  * Created by 11210 on 2017/8/8.
  */
 
+export const currentBlog = state=>state.currentBlog
+
 export const currentBlogList = state=>state.currentBlogList
 
 export const users = state=>state.users

@@ -11,7 +11,7 @@
       <el-form-item class="text">
         <div id="editor" class="post">
           <textarea :value="idea.blogContent" @input="update" class="text-textarea"></textarea>
-          <div v-html="compiledMarkdown" class="text-content"></div>
+          <div v-html="compiledMarkdown" class="text-content markdown-body"></div>
         </div>
       </el-form-item>
       <el-form-item class="submit">
@@ -32,7 +32,7 @@ export default{
     return{
       rules:{
         blogTitle:[{ required: true, message: '请输入文章标题', trigger: 'blur' },
-          { min: 4, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }]
+          { min: 4, max: 30, message: '长度在 6 到 30 个字符', trigger: 'blur' }]
       },
       idea:{
         blogId:'',
@@ -113,10 +113,11 @@ export default{
   }
   .text-textarea{
     min-height: 50vh;
-    flex:0 1 400px;
+    flex:0 0 450px;
   }
   .text-content{
-    flex:0 1 400px;
+    flex:0 0 450px;
+    padding: 15px;
     min-height: 50vh;
     background-color: rgba(0,0,0,.1);
   }

@@ -1,12 +1,32 @@
 <template>
   <div id="app">
     <router-view></router-view>
+    <el-checkbox-group v-model="aa">
+      <el-checkbox label="1"></el-checkbox>
+      <el-checkbox label="2"></el-checkbox>
+      <el-checkbox label="3"></el-checkbox>
+    </el-checkbox-group>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data(){
+    return{
+      a:",1,2,3"
+    }
+  },
+  computed:{
+    aa:{
+      set(value){
+        this.a = value.join(",");
+      },
+      get(){
+        return this.a.replace(/^,/,"").split(",")
+      }
+    }
+  }
 }
 </script>
 
@@ -30,6 +50,9 @@ export default {
     text-decoration: none;
     transition: color 0.2s ease, border-color 0.2s ease;
   }
+  .font0{
+    font-size: 0;
+  }
   .index-header,
   h1,
   h2,
@@ -49,124 +72,15 @@ export default {
     font-size: 14px;
     font-family: 'Monaco', courier, monospace;
   }
-
-  .gutter pre {
-    color: #999;
-  }
-  pre {
-    color: #525252;
-  }
-  pre .function .keyword,
-  pre .constant {
-    color: #0092db;
-  }
-  pre .keyword,
-  pre .attribute {
-    color: #e96900;
-  }
-  pre .number,
-  pre .literal {
-    color: #ae81ff;
-  }
-  pre .tag,
-  pre .tag .title,
-  pre .change,
-  pre .winutils,
-  pre .flow,
-  pre .lisp .title,
-  pre .clojure .built_in,
-  pre .nginx .title,
-  pre .tex .special {
-    color: #2973b7;
-  }
-  pre .class .title {
-    color: #fff;
-  }
-  pre .symbol,
-  pre .symbol .string,
-  pre .value,
-  pre .regexp {
-    color: #42b983;
-  }
-  pre .title {
-    color: #a6e22e;
-  }
-  pre .tag .value,
-  pre .string,
-  pre .subst,
-  pre .haskell .type,
-  pre .preprocessor,
-  pre .ruby .class .parent,
-  pre .built_in,
-  pre .sql .aggregate,
-  pre .django .template_tag,
-  pre .django .variable,
-  pre .smalltalk .class,
-  pre .javadoc,
-  pre .django .filter .argument,
-  pre .smalltalk .localvars,
-  pre .smalltalk .array,
-  pre .attr_selector,
-  pre .pseudo,
-  pre .addition,
-  pre .stream,
-  pre .envvar,
-  pre .apache .tag,
-  pre .apache .cbracket,
-  pre .tex .command,
-  pre .prompt {
-    color: #42b983;
-  }
-  pre .comment,
-  pre .java .annotation,
-  pre .python .decorator,
-  pre .template_comment,
-  pre .pi,
-  pre .doctype,
-  pre .deletion,
-  pre .shebang,
-  pre .apache .sqbracket,
-  pre .tex .formula {
-    color: #b3b3b3;
-  }
-  pre .coffeescript .javascript,
-  pre .javascript .xml,
-  pre .tex .formula,
-  pre .xml .javascript,
-  pre .xml .vbscript,
-  pre .xml .css,
-  pre .xml .cdata {
-    opacity: 0.5;
-  }
   .post {
     position: relative;
+    padding: 15px;
     border-bottom: 1px solid #e6e6e6;
-  }
-  .post h1,
-  .post h2 {
-    text-transform: uppercase;
-  }
-  .post h1 a:hover,
-  .post h2 a:hover {
-    border-bottom: 3px solid #666;
   }
   .post h1 {
     font-size: 32px;
     margin: 0 0 45px;
     letter-spacing: 1px;
-  }
-  .post h2 {
-    font-size: 24px;
-    margin: 60px 0 30px;
-    position: relative;
-  }
-  .post h2:before {
-    content: '';
-    border-left: 5px solid #f66;
-    position: absolute;
-    left: -15px;
-    height: 75%;
-    top: 12%;
   }
   .post h3 {
     margin: 30px 0 15px;
@@ -178,107 +92,17 @@ export default {
     margin: 0 0 30px;
     letter-spacing: 1px;
   }
-  .post .content {
-    text-align: left;
-    line-height: 1.8em;
+  .markdown-body {
+    box-sizing: border-box;
+    padding: 45px;
   }
-  .post .content p,
-  .post .content ul,
-  .post .content ol {
-    margin: 1em 0 1.5em;
+  .markdown-body h1,h2,h3{
+    padding-bottom: 0!important;
   }
-  .post .content strong {
-    font-weight: 600;
-    color: #444;
-  }
-  .post .content ol {
-    padding-left: 1.6em;
-  }
-  .post .content ul {
-    padding-left: 15px;
-    list-style-type: none;
-  }
-  .post .content ul li:before {
-    position: absolute;
-    font-weight: 600;
-    content: " · ";
-    margin: 0;
-    left: 0;
-  }
-  .post .content a {
-    color: #f66;
-    border-bottom: 2px solid transparent;
-  }
-  .post .content a:hover {
-    color: #f33;
-    border-bottom-color: #f33;
-  }
-  .post .content .highlight,
-  .post .content .highlight table {
-    margin: 0;
-    width: 100%;
-  }
-  .post .content .highlight {
-    overflow-x: auto;
-  }
-  .post .content .highlight table,
-  .post .content .highlight tr,
-  .post .content .highlight td {
-    padding: 0;
-    border-collapse: collapse;
-  }
-  .post .content code {
-    font-family: "Roboto Mono", "Menlo", "Consolas", monospace;
-    font-size: 13px;
-    background-color: #f6f6f6;
-    margin: 0 5px;
-    border-radius: 2px;
-  }
-  .post .content pre {
-    font-family: "Roboto Mono", "Menlo", "Consolas", monospace;
-    font-size: 13px;
-    overflow-x: auto;
-    text-align: left;
-    padding: 15px 25px;
-    background-color: #f6f6f6;
-    line-height: 1.5em;
-  }
-  .post .content .code pre {
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-  }
-  .post .content .gutter pre {
-    padding: 15px 0 15px 15px;
-    color: #75715e;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-  }
-  .post .content blockquote {
-    margin: 2em 0;
-    padding-left: 30px;
-    border-left: 5px solid #e6e6e6;
-  }
-  .post .content blockquote p {
-    font-size: 17px;
-    font-style: italic;
-    line-height: 1.8em;
-    color: #999;
-  }
-  .post img {
-    display: block;
-    max-width: 100%;
-  }
-
-  .show-comments {
-    font-family: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, sans-serif;
-    text-align: center;
-  }
-  .show-comments a {
-    color: #999;
-    cursor: pointer;
-  }
-  .show-comments a:hover {
-    color: #666;
+  @media (max-width: 767px) {
+    .markdown-body {
+      padding: 15px;
+    }
   }
   @media screen and (max-width: 420px) {
     .index-main {
@@ -300,20 +124,9 @@ export default {
       font-size: 12px;
       margin: 0 0 20px;
     }
-    .post .content {
-      font-size: 15px;
-    }
-    .post .content pre {
-      font-size: 12px;
-    }
-    .post .content blockquote p {
-      font-size: 16px;
-    }
     .blog-nav {
       font-size: 14px;
       color: #444;
     }
   }
-
-
 </style>

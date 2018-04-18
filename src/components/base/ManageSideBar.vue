@@ -1,7 +1,7 @@
 <template>
   <el-menu
     default-active="new-idea"
-    class="el-menu-vertical-demo manage-left"
+    class="manage-left el-menu-vertical-demo "
     :router="true"
     :collapse="isCollapse"
   >
@@ -35,7 +35,7 @@ export default{
   props:['users'],
   data(){
     return{
-      isCollapse:window.innerWidth<420
+      isCollapse:window.innerWidth<480
     }
   },
   methods:{
@@ -48,7 +48,7 @@ export default{
       this.$router.push('/')
     },
     handleResize(){
-      this.isCollapse = window.innerWidth<420
+      this.isCollapse = window.innerWidth<480
     }
   },
   mounted(){
@@ -61,8 +61,11 @@ export default{
 </script>
 
 <style>
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+  }
   .manage-left{
-    height: 100%;
-    border-right: 1px solid #c9c9c9;
+    padding-right: 24px;
   }
 </style>
