@@ -4,7 +4,7 @@
         v-infinite-scroll="loadMore"
         infinite-scroll-disabled="busy"
         infinite-scroll-distance="10">
-      <li v-for="n in currentBlogList">
+      <li v-for="n in currentBlogList" class="blog-item">
         <span class="date">{{formatDate(n.blogDate)}}</span>
         <span class="title">
           <router-link :to="'articles/'+n.blogDate" append>{{n.blogTitle}}</router-link>
@@ -70,6 +70,25 @@ export default{
     align-content: center;
     margin: 30px 0 30px;
     border-bottom: 1px solid #e6e6e6;
+  }
+  .blog-item{
+    position:relative;
+  }
+  .blog-item::before{
+    position:absolute;
+    content:'';
+    left:0;
+    bottom:0;
+    width: 100%;
+    height: 2px;
+    background-color: #777777;
+    transform-origin: 100% 0;
+    transform:scaleX(0);
+    transition: transform .5s;
+  }
+  .blog-item:hover::before{
+    transform-origin: 0 0;
+    transform:scaleX(1);
   }
   .date{
     line-height: 56px;

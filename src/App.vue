@@ -1,32 +1,12 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <el-checkbox-group v-model="aa">
-      <el-checkbox label="1"></el-checkbox>
-      <el-checkbox label="2"></el-checkbox>
-      <el-checkbox label="3"></el-checkbox>
-    </el-checkbox-group>
   </div>
 </template>
 
 <script>
 export default {
   name: 'App',
-  data(){
-    return{
-      a:",1,2,3"
-    }
-  },
-  computed:{
-    aa:{
-      set(value){
-        this.a = value.join(",");
-      },
-      get(){
-        return this.a.replace(/^,/,"").split(",")
-      }
-    }
-  }
 }
 </script>
 
