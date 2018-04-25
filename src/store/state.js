@@ -9,6 +9,7 @@ const initState = {
     lastBlogDate:''
   },
   currentBlogList:[],
+  token:'',
   //当前登录状态
   loginStatus:false,
   //当前登录用户的信息

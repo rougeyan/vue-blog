@@ -32,10 +32,6 @@ class apiManage extends BaseModule {
   changeIdea(obj){
     return this.$http.post('changeIdea',obj)
   }
-  //查找博文
-  findIdea(obj){
-    return this.$http.post('findIdea',obj)
-  }
   //获取博文列表
   getIdeaList(obj){
     return this.$http.post('getIdeaList',obj)
@@ -44,5 +40,19 @@ class apiManage extends BaseModule {
   getIdea(obj){
     return this.$http.post('getIdea',obj)
   }
+  //检查登陆状态
+  checkStatus(obj){
+    return this.$http.post('checkStatus',obj)
+  }
+  //查找博文
+  findIdea(obj){
+    return this.$http.post('findIdea',obj)
+  }
+  //注销登陆
+  logout(obj){
+    return this.$http.post('logout',obj)
+  }
 }
+
+
 export default new apiManage()

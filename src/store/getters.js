@@ -17,3 +17,5 @@ export const openLoginDialog = state=>state.ui.openLoginDialog
 export const userInfo = state=>state.users.userInfo
 
 export const blogList = state=>state.users.blogList
+
+export const token = state=>state.token

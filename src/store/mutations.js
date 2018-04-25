@@ -7,6 +7,9 @@ const mutations = {
     state.redirectTo = path
     router.push(path)
   },
+  [types.TOKEN](state,data){
+    state.token = data
+  },
   /*设置浏览的博客列表*/
   [types.SET_CURRENT_BLOG_LIST](state,data){
     state.currentBlogList = data
@@ -28,8 +31,8 @@ const mutations = {
     }
   },
   /*是否在登录状态*/
-  [types.LOGIN_SUCCESS](state){
-    state.loginStatus = true
+  [types.LOGIN_SUCCESS](state,data){
+    state.loginStatus = data
   },
   /*是否打开登录窗口*/
   [types.OPEN_LOGIN_DIALOG](state,data){

@@ -15,7 +15,7 @@
   import BlogHeader from '../base/BlogHeader'
   import BlogLinks from  '../base/BlogLinks'
   import LoginDialog from '../base/LoginDialog'
-  import {mapMutations,mapGetters} from 'vuex'
+  import {mapMutations,mapGetters,mapActions} from 'vuex'
   export default{
     name:'index',
     props:['user'],
@@ -30,6 +30,7 @@
         'openLoginDialog',
         'loginStatus',
         'users',
+        'token',
         'currentBlogList'
       ])
     },
@@ -37,11 +38,15 @@
       ...mapMutations([
         'OPEN_LOGIN_DIALOG'
       ]),
+      ...mapActions([
+        'checkStatus'
+      ]),
       openDialog(){
-        if(!this.loginStatus){
-          this.OPEN_LOGIN_DIALOG(true)
+        //如果本地有token,检验token,没有就打开登录窗口
+        if(this.token){
+          this.checkStatus({userName:this.users.userName})
         }else{
-          this.$router.push(`/${this.users.userName}/manage`)
+          this.OPEN_LOGIN_DIALOG(true)
         }
       },
       closeDialog(){

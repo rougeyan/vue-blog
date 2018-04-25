@@ -29,6 +29,7 @@ export const login = function({commit,state},data){
       commit(types.SET_USER,res.res)
       commit(types.LOGIN_SUCCESS,true)
       commit(types.OPEN_LOGIN_DIALOG,false)
+      commit(types.TOKEN,res.token)
       commit(types.REDIRECT_TO,`/${res.res.userName}/manage`)
     }
 
@@ -101,5 +102,28 @@ export const deleteIdea = function({commit,state},data){
       commit(types.DELETE_IDEA,data)
     }
 
+  })
+}
+/*检查登陆状态*/
+export const checkStatus = function({commit,state},data){
+  apiManage.checkStatus(data).then(res=>{
+    //未登录
+    if(res.errno===1){
+      commit(types.LOGIN_SUCCESS,false)
+      commit(types.OPEN_LOGIN_DIALOG,true)
+    }else{
+      commit(types.LOGIN_SUCCESS,true)
+      commit(types.REDIRECT_TO,`/${data.userName}/manage`)
+    }
+  })
+}
+/*注销登陆*/
+export const logout = function({commit,state},data){
+  apiManage.logout(data).then(res=>{
+    //注销成功
+    if(res.errno===0){
+      commit(types.LOG_OUT)
+      commit(types.REDIRECT_TO,'/')
+    }
   })
 }

@@ -91,11 +91,15 @@ export default{
     transform:scaleX(1);
   }
   .date{
+    white-space: nowrap;
     line-height: 56px;
     font-size: 13px;
     color: #999;
   }
   .title{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     line-height: 56px;
     margin-left: 30px;
     font-size: 20px;
@@ -110,7 +114,7 @@ export default{
       margin: 20px 0 20px;
     }
     .title{
-      font-size: 14px
+      font-size: 14px;
     }
   }
 </style>

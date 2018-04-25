@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="manage-container">
-      <manage-side-bar :users="users" ></manage-side-bar>
+      <manage-side-bar :users="users"></manage-side-bar>
       <router-view :users="users"></router-view>
     </div>
   </div>
@@ -16,7 +16,8 @@ export default{
   name:'Manage',
   computed:{
     ...mapGetters([
-      'users'
+      'users',
+      'token'
     ])
   },
   components:{

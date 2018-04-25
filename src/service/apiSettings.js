@@ -2,6 +2,14 @@ import axios from 'axios'
 import qs from 'qs'
 import {Message} from 'element-ui'
 
+const path = [
+  'getUserInfo',
+  'changeUserInfo',
+  'createNewIdea',
+  'deleteIdea',
+  'changeIdea',
+  'checkStatus']
+
 class BaseModule{
   constructor(){
     this.$http = axios.create({
@@ -13,6 +21,11 @@ class BaseModule{
     })
     //请求拦截器
     this.$http.interceptors.request.use(config => {
+      path.forEach((val)=>{
+        if(val===config.url){
+          config.headers['authorization'] = JSON.parse(localStorage.vuex).token
+        }
+      })
       if (config.method === "post" || config.method === "put" || config.method === "delete"){
         config.data = qs.stringify(config.data);
       }

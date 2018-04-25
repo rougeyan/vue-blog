@@ -22,7 +22,7 @@ export function formatDate(){
   function gtTen(num){
     return num>9?num:'0'+num
   }
-  return `${myDate.getFullYear()}${gtTen(myDate.getMonth()+1)}${gtTen(myDate.getDate())}${gtTen(myDate.getHours())}${gtTen(myDate.getMinutes())}`
+  return `${myDate.getFullYear()}${gtTen(myDate.getMonth()+1)}${gtTen(myDate.getDate())}${gtTen(myDate.getHours())}${gtTen(myDate.getMinutes())}${gtTen(myDate.getSeconds())}`
 
 }
 export function formatDateEng(value){

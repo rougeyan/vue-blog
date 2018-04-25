@@ -4,7 +4,6 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const PrerenderSpaPlugin = require('prerender-spa-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -70,18 +69,7 @@ module.exports = {
     ]
   },
   plugins:[
-    new BundleAnalyzerPlugin(),
-    new PrerenderSpaPlugin(
-      // Absolute path to compiled SPA
-      path.join(__dirname, '../dist'),
-      // List of routes to prerender
-      [ '/' ],
-      {
-        phantomPageSettings: {
-          loadImages: false
-        },
-      }
-    )
+    new BundleAnalyzerPlugin()
   ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue

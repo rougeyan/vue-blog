@@ -17,7 +17,7 @@
 import {mapActions} from 'vuex'
 export default{
   name:'ManageSetting',
-  props:['user','users'],
+  props:['user','users','token'],
 
   methods:{
     ...mapActions([

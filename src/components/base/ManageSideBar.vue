@@ -21,7 +21,7 @@
       <i class="el-icon-back"></i>
       <span  slot="title">返回首页</span>
     </el-menu-item>
-    <el-menu-item index="/" @click="logout">
+    <el-menu-item index="/" @click="_logout">
       <i class="el-icon-close"></i>
       <span  slot="title">退出登录</span>
     </el-menu-item>
@@ -29,7 +29,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapMutations} from 'vuex'
+import {mapMutations,mapActions} from 'vuex'
 export default{
   name:'ManageSideBar',
   props:['users'],
@@ -40,12 +40,13 @@ export default{
   },
   methods:{
     ...mapMutations([
-      'LOG_OUT',
       'BACK_INDEX'
     ]),
-    logout(){
-      this.LOG_OUT()
-      this.$router.push('/')
+    ...mapActions([
+      'logout'
+    ]),
+    _logout(){
+      this.logout({username:this.users.userName})
     },
     handleResize(){
       this.isCollapse = window.innerWidth<480

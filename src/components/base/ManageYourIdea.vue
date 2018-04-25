@@ -27,7 +27,7 @@ import {formatDate} from '../../lib/lib'
 import debounce from 'lodash/debounce'
 
 export default{
-  props:['blogDate','users'],
+  props:['blogDate','users','token'],
   data(){
     return{
       rules:{
