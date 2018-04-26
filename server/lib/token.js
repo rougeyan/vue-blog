@@ -10,30 +10,32 @@ const token = {
     redis.expire(user,3600)
     return token
   },
-  //更新token
-  updateToken(user){
+  _update(user){
     redis.expire(user,3600)
   },
-  //获取token Promise
-  getToken(user){
+  _getValue(user){
     return redis.get(user).then(res=>res)
   },
-  //删除token
-  delToken(user){
+  _delete(user){
     return redis.del(user).then(res=>res)
   },
-  //检查token
-  checkToken(user,token){
-    return (async function(){
-      let tok = await this.getToken(user)
-      if(tok === token){
-        this.updateToken(user)
+  _check(user,token){
+    return this._getValue(user).then(res=>{
+      if(res === token){
+        this._update(user)
         return true
       }else{
         return false
       }
-    }.bind(this))()
+    })
+  },
+  _incr(blog){
+    redis.incr(blog)
+    return this._getValue(blog).then(res=>res)
   }
 }
 
+
 module.exports = token
+
+

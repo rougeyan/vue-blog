@@ -66,7 +66,6 @@ export const getIdea = function({commit,state},data){
     if(res.errno===0){
       commit(types.GET_IDEA,res.res)
     }
-
   })
 }
 /*获取用户信息*/

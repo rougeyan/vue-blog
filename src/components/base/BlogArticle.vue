@@ -2,7 +2,7 @@
   <div class="index-main">
     <div class="post">
       <h1>{{idea.blogTitle}}</h1>
-      <h3 class="date" v-text="formatDate"/>
+      <h3 class="date" >{{formatDate}}&nbsp;&nbsp;&nbsp;&nbsp;浏览次数:{{idea.count}}次</h3>
       <div v-html="compiledMarkdown" class="markdown-body"></div>
     </div>
     <div class="operator">
