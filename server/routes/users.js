@@ -160,21 +160,23 @@ router.post('/getIdeaList',async function (req,res) {
 * */
 router.post('/getIdea',async function(req,res){
   let user = await users.findOne({'userName':req.body.userName})
+  let blogDate = req.body.blogDate
   if(user){
     let list = user.blogList,
         obj = {}
     list.forEach(function(item,index){
-      if(item.blogDate===req.body.blogDate){
+      if(item.blogDate===blogDate){
         obj = Object.assign(item.toObject(),{
           lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
           nextBlogDate:list[index+1]?list[index+1].blogDate:'0'})
       }
     })
-    if(req.cookies.Cal === undefined){
-      obj.count = await token._incr(req.body.blogDate) || ''
-      res.cookie('Cal','abash',{maxAge:1000*60*10,secure:true,path:'/api/getIdea'})
+    //解决同一页面刷新重复计数的问题,但是如果两个文章间切换还是存在问题
+    if(req.cookies.Cal === undefined || req.cookies.Cal !== blogDate){
+      obj.count = await token._incr(blogDate) || ''
+      res.cookie('Cal',blogDate,{maxAge:1000*60*10,secure:true,path:'/api/getIdea'})
     }else{
-      obj.count = await token._getValue(req.body.blogDate)
+      obj.count = await token._getValue(blogDate)
     }
     return obj.blogDate
       ? res.json(response(0,obj,''))
