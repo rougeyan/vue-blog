@@ -230,6 +230,7 @@ router.post('/changeIdea',async function(req,res){
 * */
 router.post('/checkStatus', function(req,res,next){
   return res.json(response(0,'',''))
+
 })
 /*注销登陆
 *
