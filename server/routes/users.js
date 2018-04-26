@@ -170,7 +170,12 @@ router.post('/getIdea',async function(req,res){
           nextBlogDate:list[index+1]?list[index+1].blogDate:'0'})
       }
     })
-    obj.count = await token._incr(req.body.blogDate) || ''
+    if(req.cookies.Cal === undefined){
+      obj.count = await token._incr(req.body.blogDate) || ''
+      res.cookie('Cal','abash',{maxAge:1000*60*10,secure:true,path:'/api/getIdea'})
+    }else{
+      obj.count = await token._getValue(req.body.blogDate)
+    }
     return obj.blogDate
       ? res.json(response(0,obj,''))
       : res.json(response(1,'','文章不存在'))
