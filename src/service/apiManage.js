@@ -5,52 +5,58 @@ class apiManage extends BaseModule {
   constructor() {
     super()
   }
-  //登录注册
+  //注册
   createUser(obj){
-    return this.$http.post('createUser',obj)
+    return this.$http.post('register',obj)
   }
+  //登陆
   checkUser(obj){
-    return this.$http.post('checkUser',obj)
+    return this.$http.post('login',obj)
   }
-  //获取用户信息
-  getUserInfo(obj){
-    return this.$http.post('getUserInfo',obj)
-  }
-  //修改用户信息
-  changeUserInfo(obj){
-    return this.$http.post('changeUserInfo',obj)
-  }
-  //发送新博文
-  createNewIdea(obj){
-    return this.$http.post('createNewIdea',obj)
-  }
-  //删除博客
-  deleteIdea(obj){
-    return this.$http.post('deleteIdea',obj)
-  }
-  //修改博文
-  changeIdea(obj){
-    return this.$http.post('changeIdea',obj)
-  }
-  //获取博文列表
-  getIdeaList(obj){
-    return this.$http.post('getIdeaList',obj)
-  }
-  //获取某一个文章
-  getIdea(obj){
-    return this.$http.post('getIdea',obj)
+  //注销登陆
+  logout(obj){
+    return this.$http.post('logout',obj)
   }
   //检查登陆状态
   checkStatus(obj){
     return this.$http.post('checkStatus',obj)
   }
-  //查找博文
-  findIdea(obj){
-    return this.$http.post('findIdea',obj)
+
+  //修改用户信息
+  changeUserInfo(obj){
+    return this.$http.put('userinfo',obj)
   }
-  //注销登陆
-  logout(obj){
-    return this.$http.post('logout',obj)
+  //获取用户信息
+  getUserInfo(obj){
+    return this.get('userinfo',obj)
+  }
+
+
+  //发送新博文
+  createNewIdea(obj){
+    return this.$http.post('ideas',obj)
+  }
+  //删除博客
+  deleteIdea(obj){
+    let {blogDate,...data} = obj
+    let url = `ideas/${blogDate}`
+    return this.$http.delete(url,{data:data})
+  }
+  //修改博文
+  changeIdea(obj){
+    let {blogDate,...data} = obj
+    let url = `ideas/${blogDate}`
+    return this.$http.put(url,data)
+  }
+  //获取某一个文章
+  getIdea(obj){
+    let {blogDate,...data} = obj
+    let url = `ideas/${blogDate}`
+    return this.get(url,data)
+  }
+  //获取博文列表
+  getIdeaList(obj){
+    return this.get('ideas',obj)
   }
 }
 

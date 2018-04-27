@@ -39,7 +39,8 @@
         'OPEN_LOGIN_DIALOG'
       ]),
       ...mapActions([
-        'checkStatus'
+        'checkStatus',
+        'getUserInfo'
       ]),
       openDialog(){
         //如果本地有token,检验token,没有就打开登录窗口
@@ -52,6 +53,9 @@
       closeDialog(){
         this.OPEN_LOGIN_DIALOG(false)
       },
+    },
+    created(){
+      this.getUserInfo({userName:this.user})
     }
   }
 </script>

@@ -12,7 +12,6 @@ const response = function(errno=0,res='',msg='',token=''){
       res,
       msg,
       token
-
     }:{
       errno,
       res,
@@ -28,34 +27,50 @@ const filterProp = (item)=>{
 }
 const _Loginfilter = {'userPwd':0,'__v':0,'blogList':0}
 
-
-router.use(function(req, res, next) {
-  const valid = [
-    '/api//getUserInfo',
-    '/api//changeUserInfo',
-    '/api//createNewIdea',
-    '/api//deleteIdea',
-    '/api//changeIdea',
-    '/api//checkStatus'
+//中间件:包含在validToken数组中的路径需要先验证token是否正确
+router.use(async function(req, res, next) {
+  const validToken = [
+    'PUT/api//userinfo', //修改用户信息
+    'POST/api//ideas',   //新增博文
+    'DELETE/api//ideas', //删除博文
+    'PUT/api//ideas',    //修改博文
+    'POST/api//checkStatus' //检查token
   ]
-  //需要验证token
-  if(valid.includes(req.originalUrl)){
+  if(validToken.includes(req.method+req.originalUrl)){
     let tok = req.headers['authorization'] || req.body.token || ''
-    token._check(req.body.userName,tok).then(data=>{
-      if(data){
-        next()
-      }else{
-        return res.json(response(1,'','凭证失效'))
-      }
-    })
+    let data = await token._check(req.body.userName,tok)
+    if(data){
+      next()
+    }else{
+      return res.json(response(1,'','凭证失效'))
+    }
   }else{
     next()
   }
 })
-/*注册功能
-* 对获取的用户名密码进行检查，都通过后检测用户名是否次重复
-* */
-router.post('/createUser',async function(req, res) {
+//中间件:不包含在数组中的路径需要先验证是否存在该用户,如果有将结果挂载到req._user下
+router.use(async function(req,res,next){
+  const noValidUser = [
+    '/api//checkStatus',
+    '/api//logout',
+    '/api//register',
+    '/api//login'
+  ]
+  if(!noValidUser.includes(req.originalUrl)){
+    let userName = req.body.userName || req.query.userName
+    let user = await users.findOne({'userName':userName})
+    if(user){
+      req._user = user
+      next()
+    }else{
+      return res.json(response(1,'','没有该用户'))
+    }
+  }else{
+    next()
+  }
+})
+//注册功能
+router.post('/register',async function(req, res) {
   let {userName,userPwd}= req.body
   if(check.validateLength(userName) && check.validateLength(userPwd)){
     let user = await users.findOne({'userName':userName})
@@ -71,10 +86,8 @@ router.post('/createUser',async function(req, res) {
     return res.json(response(1,'','数据非法'))
   }
 });
-/*登录功能
-*
-* */
-router.post('/checkUser',async function (req,res) {
+//登录功能
+router.post('/login',async function (req,res) {
   let userName = req.body.userName
   let user = await users.findOne(req.body,_Loginfilter )
   if(user){
@@ -85,163 +98,7 @@ router.post('/checkUser',async function (req,res) {
     return res.json(response(1,'','用户名或密码错误'))
   }
 });
-/*修改个人信息功能
-*
-* */
-router.post('/changeUserInfo',async function(req,res){
-  let user = await users.findOne({'userName':req.body.userName})
-  if(user){
-    user.userInfo = req.body
-    let data = await user.save()
-    if(data){
-      return res.json(response(0,'','修改成功'))
-    }else{
-      return res.json(response(1,'','修改失败'))
-    }
-  }else{
-    return res.json(response(1,'','没有该用户'))
-  }
-})
-/*获取个人信息
-*
-* */
-router.post('/getUserInfo',async function(req,res){
-  let user = await users.findOne({'userName':req.body.userName})
-  if(user){
-    return res.json(response(0,user.userInfo,''))
-  }else{
-    return res.json(response(1,'','没有该用户'))
-  }
-})
-/*发布博客功能
-*
-* */
-router.post('/createNewIdea',async function(req,res){
-  let user = await users.findOne({'userName':userName})
-  if(user){
-    user.blogList.push({
-      'blogTitle':req.body.blogTitle,
-      'blogContent':req.body.blogContent,
-      'blogDate':req.body.blogDate,
-      'blogType':req.body.blogType
-    })
-    let data = user.save()
-    if(data){
-      return res.json(response(0,'','发布成功'))
-    }else{
-      return res.json(response(1,'','发布失败'))
-    }
-  }else{
-    return res.json(response(1,'','用户不存在'))
-  }
-})
-/*获取文章列表
-*
-* */
-router.post('/getIdeaList',async function (req,res) {
-  let user = await users.findOne({'userName':req.body.userName})
-  if(user){
-    let obj = user.blogList.toObject().map((item)=>filterProp(item))
-    if(req.body.type==='all'){
-      let data = user.blogList.reverse()
-      return res.json(response(0,getPage(req.body.pgN,req.body.pgS,data),''))
-    }
-    if(req.body.type==='public'){
-      let data = obj.filter((item)=>item.blogType==='public').reverse()
-      return res.json(response(0,getPage(req.body.pgN,req.body.pgS,data),''))
-    }
-    return res.json(response(0,'',''))
-  }else{
-    return res.json(response(1,'','该用户没有文章'))
-  }
-})
-/*获取某一篇文章
-*
-* */
-router.post('/getIdea',async function(req,res){
-  let user = await users.findOne({'userName':req.body.userName})
-  let blogDate = req.body.blogDate
-  if(user){
-    let list = user.blogList,
-        obj = {}
-    list.forEach(function(item,index){
-      if(item.blogDate===blogDate){
-        obj = Object.assign(item.toObject(),{
-          lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
-          nextBlogDate:list[index+1]?list[index+1].blogDate:'0'})
-      }
-    })
-    //解决同一页面刷新重复计数的问题,但是如果两个文章间切换还是存在问题
-    if(req.cookies.Cal === undefined || req.cookies.Cal !== blogDate){
-      obj.count = await token._incr(blogDate) || ''
-      res.cookie('Cal',blogDate,{maxAge:1000*60*10,secure:true,path:'/api/getIdea'})
-    }else{
-      obj.count = await token._getValue(blogDate)
-    }
-    return obj.blogDate
-      ? res.json(response(0,obj,''))
-      : res.json(response(1,'','文章不存在'))
-
-  }else{
-    return res.json(response(1,'','用户不存在'))
-  }
-})
-/*删除某一篇文章
-*
-* */
-router.post('/deleteIdea',async function(req,res){
-  let user = await users.findOne({'userName':req.body.userName})
-  if(user){
-    let index
-    user.blogList.forEach((item,i)=>{
-      if(item.blogDate===req.body.blogDate){
-        index = i
-      }
-    })
-    if(index!==undefined){
-      user.blogList.splice(index,1)
-      await user.save()
-      await token._delete(req.body.blogDate)
-      return res.json(response(0,'','操作成功'))
-    }
-    return res.json(response(1,'','文章不存在'))
-  }else{
-    return res.json(response(1,'','用户不存在'))
-  }
-})
-/*修改某一篇文章
-*
-* */
-router.post('/changeIdea',async function(req,res){
-  let user = await users.findOne({'userName':req.body.userName})
-  if(user){
-    user.blogList.forEach((item,i)=>{
-      if(item.blogDate===req.body.blogDate){
-        item.blogTitle = req.body.blogTitle
-        item.blogContent = req.body.blogContent
-        item.blogType = req.body.blogType
-      }
-    })
-    let data = await user.save()
-    if(data){
-      return res.json(response(0,'','修改成功'))
-    }else{
-      return res.json(response(1,'','修改失败'))
-    }
-  }else{
-    return res.json(response(1,'','用户不存在'))
-  }
-})
-/*检查token是否有效
-*
-* */
-router.post('/checkStatus', function(req,res,next){
-  return res.json(response(0,'',''))
-
-})
-/*注销登陆
-*
-* */
+//注销登陆
 router.post('/logout',function(req,res){
   let { userName } = req.body
   token._delete(userName).then(result=>{
@@ -252,4 +109,114 @@ router.post('/logout',function(req,res){
     }
   })
 })
+//检查token
+router.post('/checkStatus', function(req,res){
+  return res.json(response(0,'',''))
+
+})
+
+//稍微有点RESTful的感觉吧!
+
+//修改个人信息 token
+router.put('/userinfo',async function(req,res){
+  req._user.userInfo = req.body
+  let data = await req._user.save()
+  if(data){
+    return res.json(response(0,'','修改成功'))
+  }else{
+    return res.json(response(1,'','修改失败'))
+  }
+})
+//获取个人信息
+router.get('/userinfo',async function(req,res){
+  return res.json(response(0,req._user.userInfo,''))
+})
+
+//发布博客功能 token
+router.post('/ideas',async function(req,res){
+  req._user.blogList.push({
+    'blogTitle':req.body.blogTitle,
+    'blogContent':req.body.blogContent,
+    'blogDate':req.body.blogDate,
+    'blogType':req.body.blogType
+  })
+  let data = req._user.save()
+  if(data){
+    return res.json(response(0,'','发布成功'))
+  }else{
+    return res.json(response(1,'','发布失败'))
+  }
+})
+//删除某一篇文章 token
+router.delete('/ideas/:blogDate',async function(req,res){
+  let index
+  req._user.blogList.forEach((item,i)=>{
+    if(item.blogDate===req.params.blogDate){
+      index = i
+    }
+  })
+  if(index!==undefined){
+    req._user.blogList.splice(index,1)
+    await req._user.save()
+    await token._delete(req.params.blogDate)
+    return res.json(response(0,'','操作成功'))
+  }
+  return res.json(response(1,'','文章不存在'))
+})
+//修改某一篇文章 token
+router.put('/ideas/:blogDate',async function(req,res){
+  req._user.blogList.forEach((item,i)=>{
+    if(item.blogDate===req.params.blogDate){
+      item.blogTitle = req.body.blogTitle
+      item.blogContent = req.body.blogContent
+      item.blogType = req.body.blogType
+    }
+  })
+  let data = await req._user.save()
+  if(data){
+    return res.json(response(0,'','修改成功'))
+  }else{
+    return res.json(response(1,'','修改失败'))
+  }
+})
+//获取某一篇文章
+router.get('/ideas/:blogDate',async function(req,res){
+  let blogDate = req.params.blogDate
+  let list = req._user.blogList,
+    obj = {}
+  list.forEach(function(item,index){
+    if(item.blogDate===blogDate){
+      obj = Object.assign(item.toObject(),{
+        lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
+        nextBlogDate:list[index+1]?list[index+1].blogDate:'0'})
+    }
+  })
+  //解决同一页面刷新重复计数的问题,但是如果两个文章间切换还是存在问题
+  if(req.cookies.Cal === undefined || req.cookies.Cal !== blogDate){
+    obj.count = await token._incr(blogDate) || ''
+    res.cookie('Cal',blogDate,{maxAge:1000*60*10,secure:true,path:'/api/getIdea'})
+  }else{
+    obj.count = await token._getValue(blogDate)
+  }
+  return obj.blogDate
+    ? res.json(response(0,obj,''))
+    : res.json(response(1,'','文章不存在'))
+})
+//获取文章列表
+router.get('/ideas',async function (req,res) {
+  let obj = req._user.blogList.toObject().map((item)=>filterProp(item))
+  if(req._user.blogList.toObject().length===0){
+    return res.json(response(1,'','该用户没有文章'))
+  }
+  if(req.query.type==='all'){
+    let data = req._user.blogList.reverse()
+    return res.json(response(0,getPage(req.query.pgN,req.query.pgS,data),''))
+  }
+  if(req.query.type==='public'){
+    let data = obj.filter((item)=>item.blogType==='public').reverse()
+    return res.json(response(0,getPage(req.query.pgN,req.query.pgS,data),''))
+  }
+  return res.json(response(0,'',''))
+})
+
 module.exports = router;

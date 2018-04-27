@@ -3,12 +3,11 @@ import qs from 'qs'
 import {Message} from 'element-ui'
 
 const path = [
-  'getUserInfo',
-  'changeUserInfo',
-  'createNewIdea',
-  'deleteIdea',
-  'changeIdea',
-  'checkStatus']
+  'put userinfo',
+  'post ideas',
+  'delete ideas',
+  'put ideas',
+  'post checkStatus']
 
 class BaseModule{
   constructor(){
@@ -22,7 +21,8 @@ class BaseModule{
     //请求拦截器
     this.$http.interceptors.request.use(config => {
       path.forEach((val)=>{
-        if(val===config.url){
+        let v = val.split(' ')
+        if(v[0]===config.method && config.url.includes(v[1]) ){
           config.headers['authorization'] = JSON.parse(localStorage.vuex).token
         }
       })
@@ -68,8 +68,8 @@ class BaseModule{
     })
 
   }
-  get(url,config={}){
-    return this.$http.get(url,config)
+  get(url,params={}){
+    return this.$http.get(url,{params:params})
   }
   post(url,data=undefined,config={}){
     return this.$http.post(url,data,{...config})
@@ -77,7 +77,7 @@ class BaseModule{
   put(url,data=undefined,config={}){
     return this.$http.put(url,data,{...config})
   }
-  delete(url,config={}){
+  delete(url,config){
     return this.$http.delete(url,config)
   }
 

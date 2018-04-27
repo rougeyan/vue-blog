@@ -72,7 +72,7 @@ export const getIdea = function({commit,state},data){
 export const getUserInfo = function({commit,state},data){
   apiManage.getUserInfo(data).then(res=>{
     if(res.errno===0){
-
+      commit(types.GET_USER_INFO,res.res)
     }
   })
 }
