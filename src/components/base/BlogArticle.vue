@@ -3,12 +3,17 @@
     <div class="post">
       <h1>{{idea.blogTitle}}</h1>
       <h3 class="date" >{{formatDate}}&nbsp;&nbsp;&nbsp;&nbsp;浏览次数:{{idea.count}}次</h3>
-      <div v-html="compiledMarkdown" class="markdown-body"></div>
+      <div v-html="compiledMarkdown" class="markdown-body" @click="scaleImg($event)"></div>
     </div>
     <div class="operator">
       <a id="newer" class="blog-nav" @click.prevent="openOtherBlogs(idea.lastBlogDate)">&nbsp;&lt;上一篇</a>
       <a id="older" class="blog-nav" @click.prevent="openOtherBlogs(idea.nextBlogDate)">下一篇&nbsp;&gt;</a>
     </div>
+    <el-dialog :visible.sync="dialogVisble"
+               custom-class="fake"
+               :show-close="false">
+      <img :src="dialogSrc" alt="" >
+    </el-dialog>
   </div>
 </template>
 
@@ -20,6 +25,12 @@
     watch: {
       // 如果路由有变化，会再次执行该方法
       '$route': '_getIdea'
+    },
+    data(){
+      return{
+        dialogVisble:false,
+        dialogSrc:''
+      }
     },
     computed: {
       compiledMarkdown: function () {
@@ -48,8 +59,15 @@
         }else{
           this.$message.info('暂不可用！')
         }
+      },
+      scaleImg(e){
+        if(e.target.src){
+          this.dialogSrc = e.target.src
+          this.dialogVisble=true
+        }
       }
     },
+
     created(){
       this._getIdea()
     }
@@ -82,6 +100,10 @@
   }
   #older {
     right: 40px;
+  }
+  .fake{
+    box-shadow: none;
+    background-color: rgb(127,127,127)
   }
   @media screen and (max-width: 950px) {
     .blog-nav {

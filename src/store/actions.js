@@ -47,6 +47,8 @@ export const createNewIdea = function({commit,state},data){
   apiManage.createNewIdea(data).then((res)=>{
     if(res.errno===0){
       commit(types.CREATE_NEW_IDEA,data)
+      //从浏览器中删除缓存
+      localStorage.removeItem(`manuscript`)
     }
 
   })
@@ -56,6 +58,8 @@ export const updateIdea = function({commit,state},data){
   apiManage.changeIdea(data).then(res=>{
     if(res.errno===0){
       commit(types.CHANGE_IDEA,data)
+      //从浏览器中删除缓存
+      localStorage.removeItem(`article${data.blogDate}`)
     }
 
   })

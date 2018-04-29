@@ -35,7 +35,6 @@ export default{
           { min: 4, max: 30, message: '长度在 6 到 30 个字符', trigger: 'blur' }]
       },
       idea:{
-        blogId:'',
         blogTitle:'',
         blogDate:'',
         blogContent:'',
@@ -57,6 +56,8 @@ export default{
       'updateIdea',
     ]),
     update:debounce(function (e) {
+      let key = this.blogDate ? `article${this.blogDate}` : 'manuscript'
+      localStorage.setItem(key,JSON.stringify(this.idea))
       this.idea.blogContent = e.target.value
     }, 300),
     _send(){
@@ -89,9 +90,22 @@ export default{
     }
   },
   beforeRouteEnter (to, from, next) {
+    let key = to.query.blogDate ?  `article${to.query.blogDate}` : 'manuscript'
+    //如果是修改文章
     if(to.query.blogDate){
       next(vm => {
         vm.idea = vm.blogList.filter(item=>item.blogDate===to.query.blogDate)[0]
+      })
+    }
+    //如果浏览器缓存中存在该文章的缓存,则读取它
+    if(localStorage.getItem(key)){
+      next(vm=>{
+        vm.idea = JSON.parse(localStorage.getItem(key))
+        vm.$notify({
+          title: '提示',
+          message: '已采用缓存中的内容',
+          duration: 2000
+        });
       })
     }else{
       next()

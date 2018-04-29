@@ -117,7 +117,7 @@ router.post('/checkStatus', function(req,res){
 
 //稍微有点RESTful的感觉吧!
 
-//修改个人信息 token
+//修改个人信息
 router.put('/userinfo',async function(req,res){
   req._user.userInfo = req.body
   let data = await req._user.save()
@@ -132,7 +132,7 @@ router.get('/userinfo',async function(req,res){
   return res.json(response(0,req._user.userInfo,''))
 })
 
-//发布博客功能 token
+//发布博客功能
 router.post('/ideas',async function(req,res){
   req._user.blogList.push({
     'blogTitle':req.body.blogTitle,
@@ -147,7 +147,7 @@ router.post('/ideas',async function(req,res){
     return res.json(response(1,'','发布失败'))
   }
 })
-//删除某一篇文章 token
+//删除某一篇文章
 router.delete('/ideas/:blogDate',async function(req,res){
   let index
   req._user.blogList.forEach((item,i)=>{
@@ -163,7 +163,7 @@ router.delete('/ideas/:blogDate',async function(req,res){
   }
   return res.json(response(1,'','文章不存在'))
 })
-//修改某一篇文章 token
+//修改某一篇文章
 router.put('/ideas/:blogDate',async function(req,res){
   req._user.blogList.forEach((item,i)=>{
     if(item.blogDate===req.params.blogDate){
@@ -194,7 +194,7 @@ router.get('/ideas/:blogDate',async function(req,res){
   //解决同一页面刷新重复计数的问题,但是如果两个文章间切换还是存在问题
   if(req.cookies.Cal === undefined || req.cookies.Cal !== blogDate){
     obj.count = await token._incr(blogDate) || ''
-    res.cookie('Cal',blogDate,{maxAge:1000*60*10,secure:true,path:'/api/getIdea'})
+    res.cookie('Cal',blogDate,{maxAge:1000*60*10,secure:true,path:'/api/ideas'})
   }else{
     obj.count = await token._getValue(blogDate)
   }
