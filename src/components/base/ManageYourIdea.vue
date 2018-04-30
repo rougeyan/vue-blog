@@ -16,14 +16,35 @@
       </el-form-item>
       <el-form-item class="submit">
         <el-button plain style="margin-top: 20px" @click="sendIdea">发布</el-button>
+        <el-button type="primary" style="margin-top: 20px" @click="openDialog">上传</el-button>
       </el-form-item>
     </el-form>
+    <el-dialog :visible="dialogVisble"
+               @close="closeDialog">
+      <el-upload
+        class="upload-demo"
+        drag
+        :show-file-list="false"
+        action="/files"
+        :httpRequest="upload"
+        :before-upload="beforeAvatarUpload"
+        multiple>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+      <el-input placeholder="文件路径" v-model="imgpath" id="target">
+        <el-button slot="append" @click="copy" data-clipboard-target="#target" class="btn">复制</el-button>
+      </el-input>
+    </el-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import ClipboardJS from 'clipboard'
 import {mapActions,mapGetters} from 'vuex'
 import {formatDate} from '../../lib/lib'
+import axios from 'axios'
 import debounce from 'lodash/debounce'
 
 export default{
@@ -39,7 +60,9 @@ export default{
         blogDate:'',
         blogContent:'',
         blogType:'public'
-      }
+      },
+      dialogVisble:false,
+      imgpath:''
     }
   },
   computed: {
@@ -55,6 +78,53 @@ export default{
       'createNewIdea',
       'updateIdea',
     ]),
+    copy(){
+      let that = this
+      const clipboard = new ClipboardJS('.btn');
+      clipboard.on('success', function(e) {
+        that.$notify({
+          title: '提示',
+          message: '已复制到粘贴板',
+          duration: 1000
+        });
+        e.clearSelection();
+      });
+    },
+    upload(){
+      let formData = new FormData()
+      formData.append('file',this.file)
+      axios.post('/api/files',formData,{
+        headers:{
+          'Content-Type':'multipart/form-data',
+          'Authorization':JSON.parse(localStorage.vuex).token,
+          'userName':this.users.userName
+        }
+      }).then(res=>{
+        if(res.data.res){
+          this.imgpath = res.data.res
+        }
+      })
+    },
+    closeDialog(){
+      this.dialogVisble = false
+    },
+    openDialog(){
+      this.dialogVisble = true
+    },
+    beforeAvatarUpload(file) {
+      const isImage = file.type.includes('image');
+      const isLt4M = file.size / 1024 / 1024 < 4;
+      if (!isImage) {
+        this.$message.error('只能上传图片');
+        return false
+      }
+      if (!isLt4M) {
+        this.$message.error('上传图片大小不能超过 4MB!');
+        return false
+      }
+      this.file = file
+      return true
+    },
     update:debounce(function (e) {
       let key = this.blogDate ? `article${this.blogDate}` : 'manuscript'
       localStorage.setItem(key,JSON.stringify(this.idea))

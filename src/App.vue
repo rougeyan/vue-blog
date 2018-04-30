@@ -79,6 +79,12 @@ export default {
   .markdown-body h1,h2,h3{
     padding-bottom: 0!important;
   }
+  .el-upload-dragger{
+    width: 100%;
+  }
+  .el-upload{
+    width: 70%;
+  }
   @media (max-width: 767px) {
     .markdown-body {
       padding: 15px;

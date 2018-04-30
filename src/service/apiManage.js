@@ -58,6 +58,9 @@ class apiManage extends BaseModule {
   getIdeaList(obj){
     return this.get('ideas',obj)
   }
+  upload(obj,config){
+    return this.$http.post('files',obj,config)
+  }
 }
 
 

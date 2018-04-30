@@ -12,7 +12,7 @@
     <el-dialog :visible.sync="dialogVisble"
                custom-class="fake"
                :show-close="false">
-      <img :src="dialogSrc" alt="" >
+      <img :src="dialogSrc" alt="" class="dialogSrc">
     </el-dialog>
   </div>
 </template>
@@ -29,7 +29,7 @@
     data(){
       return{
         dialogVisble:false,
-        dialogSrc:''
+        dialogSrc:'',
       }
     },
     computed: {
@@ -49,7 +49,6 @@
       _getIdea(){
         this.getIdea({userName:this.user,blogDate:this.id})
       },
-
       hasSiblings(arr){
         return index=>property=>arr[index]?arr[index][property]:'0'
       },
@@ -67,7 +66,6 @@
         }
       }
     },
-
     created(){
       this._getIdea()
     }
@@ -78,6 +76,7 @@
   .markdown-body{
     max-width: 950px;
   }
+
   .blog-nav {
     position: fixed;
     bottom: 20px;
@@ -102,8 +101,16 @@
     right: 40px;
   }
   .fake{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     box-shadow: none;
-    background-color: rgb(127,127,127)
+    background-color: rgb(127,127,127);
+    visibility: hidden;
+  }
+  .dialogSrc{
+    visibility: visible;
+    width: 40vw;
   }
   @media screen and (max-width: 950px) {
     .blog-nav {
@@ -119,6 +126,14 @@
     .operator{
       position: relative;
       height: 60px;
+    }
+    .dialogSrc{
+      width: 50vw;
+    }
+  }
+  @media screen and (max-width:480px){
+    .dialogSrc{
+      width: 70vw;
     }
   }
 </style>

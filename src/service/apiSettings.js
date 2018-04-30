@@ -7,7 +7,9 @@ const path = [
   'post ideas',
   'delete ideas',
   'put ideas',
-  'post checkStatus']
+  'post checkStatus',
+  'post files'
+]
 
 class BaseModule{
   constructor(){

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../multer/index')
 const mongoose = require('../mongodb/index')
 const token = require('../lib/token')
 const users = require('../model/users')
@@ -34,11 +35,13 @@ router.use(async function(req, res, next) {
     'POST/api//ideas',   //新增博文
     'DELETE/api//ideas', //删除博文
     'PUT/api//ideas',    //修改博文
-    'POST/api//checkStatus' //检查token
+    'POST/api//checkStatus' ,//检查token
+    'POST/api//files' //上传图片
   ]
   if(validToken.includes(req.method+req.originalUrl)){
-    let tok = req.headers['authorization'] || req.body.token || ''
-    let data = await token._check(req.body.userName,tok)
+    let tok = req.headers['authorization'] || req.body.token || '',
+        userName = req.body.userName || req.headers['username'] || ''
+    let data = await token._check(userName,tok)
     if(data){
       next()
     }else{
@@ -54,7 +57,8 @@ router.use(async function(req,res,next){
     '/api//checkStatus',
     '/api//logout',
     '/api//register',
-    '/api//login'
+    '/api//login',
+    '/api//files'
   ]
   if(!noValidUser.includes(req.originalUrl)){
     let userName = req.body.userName || req.query.userName
@@ -217,6 +221,13 @@ router.get('/ideas',async function (req,res) {
     return res.json(response(0,getPage(req.query.pgN,req.query.pgS,data),''))
   }
   return res.json(response(0,'',''))
+})
+
+
+//图片上传
+router.post('/files',upload.single('file'),async function(req,res){
+  let path = `https://blog.calabash.top/${req.file.filename}`
+  return res.json(response(0,path,''))
 })
 
 module.exports = router;
