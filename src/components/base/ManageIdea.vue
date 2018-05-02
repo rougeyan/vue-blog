@@ -42,7 +42,7 @@
   import {mapActions,mapGetters} from 'vuex'
   export default{
     name:'ManageIdea',
-    props:['users','token'],
+    props:['users'],
     data(){
       return{
         isShow:window.innerWidth<420,

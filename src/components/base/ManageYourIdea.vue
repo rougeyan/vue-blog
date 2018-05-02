@@ -25,6 +25,7 @@
         class="upload-demo"
         drag
         :show-file-list="false"
+        :file-list="fileList"
         action="/files"
         :httpRequest="upload"
         :before-upload="beforeAvatarUpload"
@@ -48,7 +49,7 @@ import axios from 'axios'
 import debounce from 'lodash/debounce'
 
 export default{
-  props:['blogDate','users','token'],
+  props:['blogDate','users'],
   data(){
     return{
       rules:{
@@ -62,41 +63,41 @@ export default{
         blogType:'public'
       },
       dialogVisble:false,
-      imgpath:''
+      imgpath:'',
+      fileList:[]
     }
   },
   computed: {
     compiledMarkdown: function () {
       return marked(this.idea.blogContent, { sanitize: true })
     },
-    ...mapGetters({
-      blogList:'blogList'
-    })
+    ...mapGetters([
+      'token',
+      'blogList'
+    ])
   },
   methods: {
     ...mapActions([
       'createNewIdea',
       'updateIdea',
     ]),
+    //赋值功能
     copy(){
       let that = this
       const clipboard = new ClipboardJS('.btn');
       clipboard.on('success', function(e) {
-        that.$notify({
-          title: '提示',
-          message: '已复制到粘贴板',
-          duration: 1000
-        });
+        that.$message.success('已复制到粘贴板')
         e.clearSelection();
       });
     },
+    //文件上传
     upload(){
       let formData = new FormData()
       formData.append('file',this.file)
       axios.post('/api/files',formData,{
         headers:{
           'Content-Type':'multipart/form-data',
-          'Authorization':JSON.parse(localStorage.vuex).token,
+          'Authorization':this.token,
           'userName':this.users.userName
         }
       }).then(res=>{
@@ -107,6 +108,8 @@ export default{
     },
     closeDialog(){
       this.dialogVisble = false
+      this.fileList = []
+      this.imgpath = ''
     },
     openDialog(){
       this.dialogVisble = true

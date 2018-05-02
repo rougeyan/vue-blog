@@ -12,9 +12,19 @@ export const userName = state=>state.users.userName
 
 export const loginStatus = state=>state.loginStatus
 
-export const openLoginDialog = state=>state.ui.openLoginDialog
+export const openLoginDialog = state=>state.openLoginDialog
 
-export const userInfo = state=>state.users.userInfo
+export const userInfo = state=>{
+  if(state.users.userInfo){
+    return state.users.userInfo
+  }else{
+    return {
+      twitter:'http://www.lanternpro.site/',
+      github:'https://github.com/',
+      weibo:'https://weibo.com/'
+    }
+  }
+}
 
 export const blogList = state=>state.users.blogList
 

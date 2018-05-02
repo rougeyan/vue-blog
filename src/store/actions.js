@@ -6,7 +6,8 @@ export const getCurrentBlogList = function({commit ,state},data){
   apiManage.getIdeaList(data).then((res)=>{
     if(res.errno===0){
       commit(types.SET_CURRENT_BLOG_LIST,res.res)
-    }else{//如果该用户没有文章,重定向到Calabash
+    }
+    else{//如果该用户没有文章,重定向到Calabash
       commit(types.REDIRECT_TO,`/Calabash`)
     }
   })
@@ -25,21 +26,18 @@ export async function getMoreBlog({commit,state},data){
 export const login = function({commit,state},data){
   apiManage.checkUser(data).then((res)=>{
     if(res.errno===0){
-      //设置users,loginStatus,关闭窗口,重定向
-      commit(types.SET_USER,res.res)
-      commit(types.LOGIN_SUCCESS,true)
       commit(types.OPEN_LOGIN_DIALOG,false)
-      commit(types.TOKEN,res.token)
+      commit(types.SET_USER,res.res)
+      commit(types.SET_LOGIN_STATUS,true)
+      commit(types.SET_TOKEN,res.token)
       commit(types.REDIRECT_TO,`/${res.res.userName}/manage`)
     }
-
   })
 }
 /*注册*/
 export const register = function({commit,state},data){
   apiManage.createUser(data).then((res)=>{
     //反馈请求结果,不操作state
-
   })
 }
 /*发布新博文*/
@@ -74,9 +72,15 @@ export const getIdea = function({commit,state},data){
 }
 /*获取用户信息*/
 export const getUserInfo = function({commit,state},data){
-  apiManage.getUserInfo(data).then(res=>{
+  return apiManage.getUserInfo(data).then(res=>{
     if(res.errno===0){
-      commit(types.GET_USER_INFO,res.res)
+      //如果是当前用户
+      if(state.users.userName===data.userName){
+        commit(types.GET_USER_INFO,res.res)
+        return 1
+      }else{
+        return res.res
+      }
     }
   })
 }
@@ -104,7 +108,6 @@ export const deleteIdea = function({commit,state},data){
     if(res.errno===0){
       commit(types.DELETE_IDEA,data)
     }
-
   })
 }
 /*检查登陆状态*/
@@ -112,10 +115,10 @@ export const checkStatus = function({commit,state},data){
   apiManage.checkStatus(data).then(res=>{
     //未登录
     if(res.errno===1){
-      commit(types.LOGIN_SUCCESS,false)
+      commit(types.SET_LOGIN_STATUS,false)
       commit(types.OPEN_LOGIN_DIALOG,true)
     }else{
-      commit(types.LOGIN_SUCCESS,true)
+      commit(types.SET_LOGIN_STATUS,true)
       commit(types.REDIRECT_TO,`/${data.userName}/manage`)
     }
   })

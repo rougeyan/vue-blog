@@ -7,7 +7,8 @@ const mutations = {
     state.redirectTo = path
     router.push(path)
   },
-  [types.TOKEN](state,data){
+  //设置登陆凭证
+  [types.SET_TOKEN](state,data){
     state.token = data
   },
   /*设置浏览的博客列表*/
@@ -22,7 +23,6 @@ const mutations = {
   [types.SET_USER](state,data){
     state.users = data
   },
-
   /*注销*/
   [types.LOG_OUT](state){
     const initState = state.initState()
@@ -31,12 +31,12 @@ const mutations = {
     }
   },
   /*是否在登录状态*/
-  [types.LOGIN_SUCCESS](state,data){
+  [types.SET_LOGIN_STATUS](state,data){
     state.loginStatus = data
   },
   /*是否打开登录窗口*/
   [types.OPEN_LOGIN_DIALOG](state,data){
-    state.ui.openLoginDialog = data
+    state.openLoginDialog = data
   },
   /*创建新的博客*/
   [types.CREATE_NEW_IDEA](state,data){

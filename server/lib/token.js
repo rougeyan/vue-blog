@@ -32,9 +32,15 @@ const token = {
   _incr(blog){
     redis.incr(blog)
     return this._getValue(blog).then(res=>res)
+  },
+  ipLog(data){
+    let time = new Date().toLocaleString('zh', { hour12: false }).split(' ')[0];
+    redis.sadd(JSON.stringify(time),data);
+  },
+  getIpLog(data){
+     return redis.smembers(JSON.stringify(data)).then(res=>res)
   }
 }
-
 
 module.exports = token
 

@@ -17,7 +17,7 @@
       <i class="el-icon-setting"></i>
       <span slot="title">个人设置</span>
     </el-menu-item>
-    <el-menu-item :index="`/${users.userName}`" >
+    <el-menu-item :index="`/${userName}`" >
       <i class="el-icon-back"></i>
       <span  slot="title">返回首页</span>
     </el-menu-item>
@@ -29,14 +29,18 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapMutations,mapActions} from 'vuex'
+import {mapMutations,mapActions,mapGetters} from 'vuex'
 export default{
   name:'ManageSideBar',
-  props:['users'],
   data(){
     return{
       isCollapse:window.innerWidth<480
     }
+  },
+  computed:{
+    ...mapGetters([
+      'userName'
+    ])
   },
   methods:{
     ...mapMutations([
@@ -46,7 +50,7 @@ export default{
       'logout'
     ]),
     _logout(){
-      this.logout({username:this.users.userName})
+      this.logout({userName:this.userName})
     },
     handleResize(){
       this.isCollapse = window.innerWidth<480

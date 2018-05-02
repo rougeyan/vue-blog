@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="index-container">
       <blog-index-header :user="user" :users="users" ></blog-index-header>
-      <blog-index-links @openDialog="openDialog" :user="user" :users="users"></blog-index-links>
+      <blog-index-links @openDialog="openDialog" :infoList="infoList"></blog-index-links>
       <transition name="move" mode="out-in">
         <router-view :users="users" :currentBlogList="currentBlogList"></router-view>
       </transition>
@@ -18,8 +18,17 @@
   import {mapMutations,mapGetters,mapActions} from 'vuex'
   export default{
     name:'index',
+    //来源为router动态参数
     props:['user'],
-
+    data(){
+      return{
+        infoList:{
+          twitter:'http://www.lanternpro.site/',
+          github:'https://github.com/',
+          weibo:'https://weibo.com/'
+        }
+      }
+    },
     components:{
       'blog-index-header':BlogHeader,
       'blog-index-links':BlogLinks,
@@ -31,8 +40,13 @@
         'loginStatus',
         'users',
         'token',
+        'userInfo',
         'currentBlogList'
       ])
+    },
+    watch: {
+      // 如果路由有变化，会再次执行该方法
+      '$route': 'getInfo'
     },
     methods:{
       ...mapMutations([
@@ -51,11 +65,22 @@
         }
       },
       closeDialog(){
-        this.OPEN_LOGIN_DIALOG(false)
+        if(this.openLoginDialog){
+          this.OPEN_LOGIN_DIALOG(false)
+        }
       },
+      getInfo(){
+        this.getUserInfo({userName:this.user}).then(res=>{
+          if(res===1){
+            this.infoList = this.userInfo
+          }else{
+            this.infoList = res
+          }
+        })
+      }
     },
     created(){
-      this.getUserInfo({userName:this.user})
+      this.getInfo()
     }
   }
 </script>

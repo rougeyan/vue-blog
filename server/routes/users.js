@@ -27,18 +27,26 @@ const filterProp = (item)=>{
   return newItem
 }
 const _Loginfilter = {'userPwd':0,'__v':0,'blogList':0}
-
+//记录IP
+router.use(function(req,res,next){
+  let ip = req.headers['x-forwarded-for'] || // 判断是否有反向代理 IP
+    req.connection.remoteAddress || // 判断 connection 的远程 IP
+    req.socket.remoteAddress || // 判断后端的 socket 的 IP
+    req.connection.socket.remoteAddress;
+  token.ipLog(ip)
+  next()
+})
 //中间件:包含在validToken数组中的路径需要先验证token是否正确
 router.use(async function(req, res, next) {
   const validToken = [
-    'PUT/api//userinfo', //修改用户信息
-    'POST/api//ideas',   //新增博文
-    'DELETE/api//ideas', //删除博文
-    'PUT/api//ideas',    //修改博文
-    'POST/api//checkStatus' ,//检查token
-    'POST/api//files' //上传图片
+    'PUT/userinfo', //修改用户信息
+    'POST/ideas',   //新增博文
+    'DELETE/ideas', //删除博文
+    'PUT/ideas',    //修改博文
+    'POST/checkStatus' ,//检查token
+    'POST/files' //上传图片
   ]
-  if(validToken.includes(req.method+req.originalUrl)){
+  if(validToken.includes(req.method+req.path)){
     let tok = req.headers['authorization'] || req.body.token || '',
         userName = req.body.userName || req.headers['username'] || ''
     let data = await token._check(userName,tok)
@@ -54,13 +62,14 @@ router.use(async function(req, res, next) {
 //中间件:不包含在数组中的路径需要先验证是否存在该用户,如果有将结果挂载到req._user下
 router.use(async function(req,res,next){
   const noValidUser = [
-    '/api//checkStatus',
-    '/api//logout',
-    '/api//register',
-    '/api//login',
-    '/api//files'
+    '/checkStatus',
+    '/logout',
+    '/register',
+    '/login',
+    '/files',
+    '/pv'
   ]
-  if(!noValidUser.includes(req.originalUrl)){
+  if(!noValidUser.includes(req.path)){
     let userName = req.body.userName || req.query.userName
     let user = await users.findOne({'userName':userName})
     if(user){
@@ -222,12 +231,16 @@ router.get('/ideas',async function (req,res) {
   }
   return res.json(response(0,'',''))
 })
-
-
 //图片上传
 router.post('/files',upload.single('file'),async function(req,res){
   let path = `https://blog.calabash.top/${req.file.filename}`
   return res.json(response(0,path,''))
+})
+//获取IP地址
+router.get('/pv',async function(req,res){
+  let date = req.query.date
+  let result = await token.getIpLog(date)
+  return res.json(response(0,result,''))
 })
 
 module.exports = router;
