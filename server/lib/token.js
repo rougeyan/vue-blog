@@ -33,12 +33,17 @@ const token = {
     redis.incr(blog)
     return this._getValue(blog).then(res=>res)
   },
-  ipLog(data){
-    let time = new Date().toLocaleString('zh', { hour12: false }).split(' ')[0];
-    redis.sadd(JSON.stringify(time),data);
+  async ipLog(ip,path){
+    let [key,time] = new Date().toLocaleString('zh', { hour12: false }).split(' ');
+    let len = await redis.llen(key)
+    if(len){
+       redis.rpush(key,`${ip}-${time}-${path}`)
+    }else{
+       redis.lpush(key,`${ip}-${time}-${path}`)
+    }
   },
   getIpLog(data){
-     return redis.smembers(JSON.stringify(data)).then(res=>res)
+     return redis.lrange(data,0,-1)
   }
 }
 

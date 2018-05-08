@@ -8,7 +8,8 @@ const path = [
   'delete ideas',
   'put ideas',
   'post checkStatus',
-  'post files'
+  'post files',
+  'get pv',
 ]
 
 class BaseModule{
@@ -28,6 +29,9 @@ class BaseModule{
           config.headers['authorization'] = JSON.parse(localStorage.vuex).token
         }
       })
+      if(config.url==='https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json'){
+        config.headers['authorization']="APPCODE b62dc60dc06342848faf46fec2ce4293"
+      }
       if (config.method === "post" || config.method === "put" || config.method === "delete"){
         config.data = qs.stringify(config.data);
       }
@@ -65,7 +69,6 @@ class BaseModule{
         message:'响应出错',
         type:'error'
       })
-      //这里可以设置跳转到错误页面
       return Promise.resolve(error.response)
     })
 
@@ -82,8 +85,6 @@ class BaseModule{
   delete(url,config){
     return this.$http.delete(url,config)
   }
-
-
 }
 
 export default BaseModule

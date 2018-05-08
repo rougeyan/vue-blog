@@ -17,6 +17,10 @@
       <i class="el-icon-setting"></i>
       <span slot="title">个人设置</span>
     </el-menu-item>
+    <el-menu-item index="pv" v-if="userName==='Calabash'">
+      <i class="el-icon-bell"></i>
+      <span  slot="title">日志</span>
+    </el-menu-item>
     <el-menu-item :index="`/${userName}`" >
       <i class="el-icon-back"></i>
       <span  slot="title">返回首页</span>

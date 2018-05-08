@@ -33,7 +33,15 @@ router.use(function(req,res,next){
     req.connection.remoteAddress || // 判断 connection 的远程 IP
     req.socket.remoteAddress || // 判断后端的 socket 的 IP
     req.connection.socket.remoteAddress;
-  token.ipLog(ip)
+  //ip,时间,路径
+  const noValidPath = [
+    '/pv',
+    '/checkStatus',
+    '/userinfo'
+  ]
+  if(!noValidPath.includes(req.path) && ip.length){
+    token.ipLog(ip,req.url)
+  }
   next()
 })
 //中间件:包含在validToken数组中的路径需要先验证token是否正确
@@ -44,11 +52,15 @@ router.use(async function(req, res, next) {
     'DELETE/ideas', //删除博文
     'PUT/ideas',    //修改博文
     'POST/checkStatus' ,//检查token
-    'POST/files' //上传图片
+    'POST/files', //上传图片
+    'GET/pv'
   ]
   if(validToken.includes(req.method+req.path)){
     let tok = req.headers['authorization'] || req.body.token || '',
-        userName = req.body.userName || req.headers['username'] || ''
+        userName = req.body.userName || req.headers['username'] || req.query.userName || ''
+    if(userName!=='Calabash' && req.path==='/pv'){
+      return res.json(response(1,'','没有权限'))
+    }
     let data = await token._check(userName,tok)
     if(data){
       next()
@@ -238,7 +250,7 @@ router.post('/files',upload.single('file'),async function(req,res){
 })
 //获取IP地址
 router.get('/pv',async function(req,res){
-  let date = req.query.date
+  let date= req.query.date
   let result = await token.getIpLog(date)
   return res.json(response(0,result,''))
 })

@@ -63,6 +63,10 @@ const router = new Router({
           name:'setting',
           path: 'setting',
           component: resolve => require(['../components/base/ManageSetting.vue'], resolve)
+        }, {
+          name:'pv',
+          path:'pv',
+          component: resolve => require(['../components/base/ManagePv.vue'], resolve)
         }
       ]
     }

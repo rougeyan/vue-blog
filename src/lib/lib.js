@@ -1,3 +1,5 @@
+import api from '../service/apiManage'
+
 export function setStorage(key,value,expireSeconds){
   localStorage[key] = JSON.stringify({
     value:value,
@@ -81,3 +83,27 @@ export function throttle(fn, delay) {
     }
   };
 };
+
+export async function pvData(arr){
+  let res = []
+  let ipArr = [...new Set(arr.reduce((acc,i)=>{
+    acc.push(i.split('-')[0])
+    return acc
+  },[]))]
+  for(let n of ipArr){
+    let ipaddress = await api.getIpAddress({ip:n}),address=' '
+    if(ipaddress.code===0){
+      address = `${ipaddress.data.country}-${ipaddress.data.region}-${ipaddress.data.city}-${ipaddress.data.isp}`
+    }
+    res.push({ip:n,list:[],address:address})
+  }
+  for(let n of arr){
+    let [ip,date,path] = n.split('-')
+    for(let m of res){
+      if(m.ip===ip){
+        m.list.push({date,path})
+      }
+    }
+  }
+  return res
+}

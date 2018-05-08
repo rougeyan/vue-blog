@@ -30,8 +30,6 @@ class apiManage extends BaseModule {
   getUserInfo(obj){
     return this.get('userinfo',obj)
   }
-
-
   //发送新博文
   createNewIdea(obj){
     return this.$http.post('ideas',obj)
@@ -60,6 +58,14 @@ class apiManage extends BaseModule {
   }
   upload(obj,config){
     return this.$http.post('files',obj,config)
+  }
+  //获取pv
+  getPv(obj){
+    return this.get('pv',obj)
+  }
+  //ip地址查询
+  getIpAddress(obj){
+    return this.get('https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json',obj)
   }
 }
 

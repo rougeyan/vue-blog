@@ -84,132 +84,119 @@
     },
     created(){
       this.getInfo()
-    }
-  }
-  ;(function(window){
-    function Dotline(option){
-      this.opt = {
-        dom:'canvas',//画布id
-        cw:screen.availWidth,//画布宽
-        ch:screen.availHeight,//画布高
-        ds:100,//点的个数
-        r:0.5,//圆点半径
-        cl:'#999',//颜色
-        dis:100,//触发连线的距离
-        ...option
-      };
-
-      this.c = document.getElementById(this.opt.dom);//canvas元素id
-      this.ctx = this.c.getContext('2d');
-      var devicePixelRatio = window.devicePixelRatio || 1;
-      var backingStoreRatio = this.ctx.webkitBackingStorePixelRatio ||
-        this.ctx.mozBackingStorePixelRatio ||
-        this.ctx.msBackingStorePixelRatio ||
-        this.ctx.oBackingStorePixelRatio ||
-        this.ctx.backingStorePixelRatio || 1;
-      var ratio = devicePixelRatio / backingStoreRatio;
-      this.c.width = this.opt.cw*ratio;//canvas宽
-      this.c.height = this.opt.ch*ratio;//canvas高
-      this.dotSum = this.opt.ds;//点的数量
-      this.radius = this.opt.r;//圆点的半径
-      this.disMax = this.opt.dis*this.opt.dis;//点与点触发连线的间距
-      this.color = this.opt.cl;//设置粒子线颜色
-      this.dots = [];
-      //requestAnimationFrame控制canvas动画
-      let RAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
-        window.setTimeout(callback, 1000 / 60);
-      };
-      let _self = this;
-      //增加鼠标效果
-      let mousedot = {x:null,y:null,label:'mouse'};
-      this.c.onmousemove = function(e){
-        e = e || window.event;
-        mousedot.x = e.clientX - _self.c.offsetLeft;
-        mousedot.y = e.clientY - _self.c.offsetTop;
-      };
-      this.c.onmouseout = function(e){
-        mousedot.x = null;
-        mousedot.y = null;
+    },
+    mounted(){
+      let count=70,distance=80
+      if(window.innerWidth<600){
+        count=30
+        distance=80
       }
-      //控制动画
-      this.animate = function(){
-        _self.ctx.clearRect(0, 0, _self.c.width, _self.c.height);
-        _self.drawLine([mousedot].concat(_self.dots));
-        RAF(_self.animate);
-      };
-    }
-    //画点
-    Dotline.prototype.addDots = function(){
-      let dot;
-      for(let i=0; i<this.dotSum; i++){//参数
-        dot = {
-          x : Math.floor(Math.random()*this.c.width)-this.radius,
-          y : Math.floor(Math.random()*this.c.height)-this.radius,
-          ax : (Math.random() * 2 - 1) / 1.5,
-          ay : (Math.random() * 2 - 1) / 1.5
-        }
-        this.dots.push(dot);
+      //获取canvas上下文
+      const canvasBody = document.getElementById('canvas'),
+        drawArea = canvasBody.getContext('2d')
+      const opts = {
+        ballColor : 'rgb(200,200,200)',
+        lineColor : 'rgb(153,153,153)',
+        ballCount : count,
+        linkDistance : distance,
+        defaultRadius:1,
+        variantRadius:2,
+        defaultSpeed:0.5,
+        variantSpeed:0.5,
       }
-    };
-    //点运动
-    Dotline.prototype.move = function(dot){
-      dot.x += dot.ax;
-      dot.y += dot.ay;
-      //点碰到边缘返回
-      dot.ax *= (dot.x>(this.c.width-this.radius)||dot.x<this.radius)?-1:1;
-      dot.ay *= (dot.y>(this.c.height-this.radius)||dot.y<this.radius)?-1:1;
-      //绘制点
-      this.ctx.beginPath();
-      this.ctx.arc(dot.x, dot.y, this.radius, 0, Math.PI*2, true);
-      this.ctx.stroke();
-    };
-    //点之间画线
-    Dotline.prototype.drawLine = function(dots){
-      let nowDot;
-      let _that = this;
-      //自己的思路：遍历两次所有的点，比较点之间的距离，函数的触发放在animate里
-      this.dots.forEach(function(dot){
-        _that.move(dot);
-        for(let j=0; j<dots.length; j++){
-          nowDot = dots[j];
-          if(nowDot===dot||nowDot.x===null||nowDot.y===null) continue;//continue跳出当前循环开始新的循环
-          let dx = dot.x - nowDot.x,//别的点坐标减当前点坐标
-            dy = dot.y - nowDot.y,
-            dc = dx*dx + dy*dy;
-          if(Math.sqrt(dc)>Math.sqrt(_that.disMax)) continue;
-          // 如果是鼠标，则让粒子向鼠标的位置移动
-          if (nowDot.label && Math.sqrt(dc) >Math.sqrt(_that.disMax)/2) {
-            dot.x -= dx * 0.02;
-            dot.y -= dy * 0.02;
+      let w,h,ballList=[],tid,delay=200
+      let rgb = opts.lineColor.match(/\d+/g)
+      function resizeReset() {
+        w = canvasBody.width = window.innerWidth;
+        h = canvasBody.height = window.innerHeight;
+      }
+      function checkDistance(x1,y1,x2,y2){
+        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2))
+      }
+      function linkPoints(ball,ballList){
+        for(let i=0,l=ballList.length;i<l;i++){
+          let distance = checkDistance(ball.x,ball.y,ballList[i].x,ballList[i].y)
+          let opacity = 1 - distance/opts.linkDistance
+          if(opacity>0){
+            drawArea.lineWidth = 0.5
+            drawArea.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`
+            drawArea.beginPath()
+            drawArea.moveTo(ball.x,ball.y)
+            drawArea.lineTo(ballList[i].x,ballList[i].y)
+            drawArea.closePath()
+            drawArea.stroke()
           }
-          let ratio = (_that.disMax - dc) / _that.disMax;
-          _that.ctx.beginPath();
-          _that.ctx.lineWidth = ratio ;
-          _that.ctx.strokeStyle = _that.color;
-          _that.ctx.moveTo(dot.x, dot.y);
-          _that.ctx.lineTo(nowDot.x, nowDot.y);
-          _that.ctx.stroke();
         }
+      }
+      function deBouncer(){
+        clearTimeout(tid)
+        tid = setTimeout(function(){
+          resizeReset()
+        },delay)
+      }
+      function setup(){
+        resizeReset()
+        for(let i=0,l=opts.ballCount;i<l;i++){
+          ballList.push(new Ball())
+        }
+        window.requestAnimationFrame(loop)
+      }
+      function loop(){
+        window.requestAnimationFrame(loop)
+        drawArea.clearRect(0,0,w,h)
+        for(let i=0,l=ballList.length;i<l;i++){
+          ballList[i].move()
+          ballList[i].draw()
+        }
+        for(let i=0,l=ballList.length;i<l;i++){
+          linkPoints(ballList[i],ballList)
+        }
+      }
+      class Ball{
+        constructor(){
+          this.x = Math.random() * w
+          this.y = Math.random() * h
+          this.speed = opts.defaultSpeed + Math.random() * opts.variantSpeed
+          this.angle = Math.floor(Math.random() * 360)
+          this.color = opts.ballColor
+          this.radius = opts.defaultRadius + Math.random() * opts.variantRadius
+          this.vector = {
+            x: Math.cos(this.angle) * this.speed,
+            y: Math.sin(this.angle) * this.speed
+          }
+        }
+        hitCheck(){
+          if(this.x >= w || this.x <= 0){
+            this.vector.x *= -1
+          }
+          if(this.y >= h || this.y <= 0){
+            this.vector.y *= -1
+          }
+          if(this.x > w) this.x = w;
+          if(this.x <0) this.x = 0;
+          if(this.y > h) this.y = h;
+          if(this.y <0) this.y =0 ;
+        }
+        move(){
+          this.hitCheck()
+          this.x += this.vector.x
+          this.y += this.vector.y
+        }
+        draw(){
+          drawArea.beginPath()
+          drawArea.arc(this.x,this.y,this.radius,0,Math.PI*2)
+          drawArea.closePath()
+          drawArea.strokeStyle = this.color
+          drawArea.stroke()
+
+        }
+      }
+      window.addEventListener("resize", function(){
+        deBouncer();
       });
-    };
-    //开始动画
-    Dotline.prototype.start = function(){
-      let _that = this;
-      this.addDots();
-      setTimeout(function() {
-        _that.animate();
-      }, 100);
+      resizeReset()
+      setup()
     }
-    window.Dotline = Dotline;
-  }(window));
-  //调用
-  window.onload = function(){
-    let dotline = new Dotline({
-      dom:'canvas',//画布id
-      ds:132,//点的个数
-      r:3,//圆点半径
-      dis:88//触发连线的距离
-    }).start();
   }
 </script>
 
