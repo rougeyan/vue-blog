@@ -53,7 +53,8 @@ router.use(async function(req, res, next) {
     'PUT/ideas',    //修改博文
     'POST/checkStatus' ,//检查token
     'POST/files', //上传图片
-    'GET/pv'
+    'GET/pv',
+    'POST/comment'
   ]
   if(validToken.includes(req.method+req.path)){
     let tok = req.headers['authorization'] || req.body.token || '',
@@ -61,11 +62,15 @@ router.use(async function(req, res, next) {
     if(userName!=='Calabash' && req.path==='/pv'){
       return res.json(response(1,'','没有权限'))
     }
+    //冲突- -
+    if(req.path==='/comment'){
+      userName = req.body.user
+    }
     let data = await token._check(userName,tok)
     if(data){
       next()
     }else{
-      return res.json(response(1,'','凭证失效'))
+      return res.json(response(1,'','凭证失效,请重新登录'))
     }
   }else{
     next()
@@ -79,7 +84,8 @@ router.use(async function(req,res,next){
     '/register',
     '/login',
     '/files',
-    '/pv'
+    '/pv',
+
   ]
   if(!noValidUser.includes(req.path)){
     let userName = req.body.userName || req.query.userName
@@ -165,7 +171,7 @@ router.post('/ideas',async function(req,res){
     'blogDate':req.body.blogDate,
     'blogType':req.body.blogType
   })
-  let data = req._user.save()
+  let data = await req._user.save()
   if(data){
     return res.json(response(0,'','发布成功'))
   }else{
@@ -253,6 +259,29 @@ router.get('/pv',async function(req,res){
   let date= req.query.date
   let result = await token.getIpLog(date)
   return res.json(response(0,result,''))
+})
+//评论
+router.post('/comment',async function(req,res){
+  let {blogDate,userName,...commentBody} = req.body
+  req._user.blogList.toObject().forEach((item,index)=>{
+    if(item.blogDate===blogDate){
+      req._user.blogList[index].comment.push(commentBody)
+    }
+  })
+  let data = await req._user.save()
+  if(data){
+    return res.json(response(0,'','评论成功'))
+  }else{
+    return res.json(response(1,'','评论失败'))
+  }
+})
+//获取评论
+router.get('/comment',async function(req,res){
+  req._user.blogList.toObject().forEach((item)=>{
+    if(item.blogDate===req.query.blogDate){
+      return res.json(response(0,item.comment,''))
+    }
+  })
 })
 
 module.exports = router;

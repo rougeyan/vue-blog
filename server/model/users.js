@@ -14,7 +14,13 @@ let userSchema = new mongoose.Schema({
     "blogTitle":String,
     "blogDate":String,
     "blogContent":String,
-    "blogType":String
+    "blogType":String,
+    "comment":[{
+      "user":String,
+      "avatar":String,
+      "date":String,
+      "text":String
+    }]
   }]
 })
 

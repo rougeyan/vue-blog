@@ -4,6 +4,14 @@
       <h1>{{idea.blogTitle}}</h1>
       <h3 class="date" >{{formatDate}}&nbsp;&nbsp;&nbsp;&nbsp;浏览次数:{{idea.count}}次</h3>
       <div v-html="compiledMarkdown" class="markdown-body" @click="scaleImg($event)"></div>
+      <Comment
+        :commentList="idea.comment"
+        :blogDate="idea.blogDate"
+        :user="user"
+        :currentUser="users.userName"
+        @commitSuccess="_getIdea"
+      >
+      </Comment>
     </div>
     <div class="operator">
       <a id="newer" class="blog-nav" @click.prevent="openOtherBlogs(idea.lastBlogDate)">&nbsp;&lt;上一篇</a>
@@ -20,6 +28,7 @@
 <script type="text/ecmascript-6">
   import { mapActions ,mapGetters} from 'vuex'
   import {formatDateEng,formatDate} from '../../lib/lib'
+  import Comment from './Comment.vue'
   export default{
     props:['id','user','users','currentBlogList'],
     watch: {
@@ -30,7 +39,11 @@
       return{
         dialogVisble:false,
         dialogSrc:'',
+        commentList:[]
       }
+    },
+    components:{
+      Comment
     },
     computed: {
       compiledMarkdown: function () {

@@ -23,7 +23,11 @@
     </el-menu-item>
     <el-menu-item :index="`/${userName}`" >
       <i class="el-icon-back"></i>
-      <span  slot="title">返回首页</span>
+      <span  slot="title">我的首页</span>
+    </el-menu-item>
+    <el-menu-item index="/" >
+      <i class="el-icon-back"></i>
+      <span  slot="title">网站首页</span>
     </el-menu-item>
     <el-menu-item index="/" @click="_logout">
       <i class="el-icon-close"></i>

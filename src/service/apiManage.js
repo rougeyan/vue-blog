@@ -67,6 +67,14 @@ class apiManage extends BaseModule {
   getIpAddress(obj){
     return this.get('https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json',obj)
   }
+  //发布评论
+  postComment(obj){
+    return this.post('comment',obj)
+  }
+  //获取评论
+  getComment(obj){
+     return this.get('comment',obj)
+  }
 }
 
 
