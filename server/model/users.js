@@ -9,12 +9,17 @@ let userSchema = new mongoose.Schema({
     "github":String,
     "weibo":String
   },
+  "likeList":[{
+    "author":String,
+    "blogDate":String
+  }],
   "blogList":[{
     "blogId":String,
     "blogTitle":String,
     "blogDate":String,
     "blogContent":String,
     "blogType":String,
+    "likeCount":Number,
     "comment":[{
       "user":String,
       "avatar":String,

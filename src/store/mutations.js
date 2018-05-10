@@ -75,6 +75,10 @@ const mutations = {
   /*获取博客列表*/
   [types.GET_IDEA_LIST](state,data){
     state.users.blogList = data
+  },
+  /*设置喜欢列表*/
+  [types.SET_LIKELIST](state,data){
+    state.users.likeList = data
   }
 }
 export default  mutations

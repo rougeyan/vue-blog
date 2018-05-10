@@ -30,3 +30,5 @@ export const BACK_INDEX =  'BACK_INDEX'
 export const LOAD_MORE = 'LOAD_MORE'
 
 export const SET_TOKEN = 'SET_TOKEN'
+
+export const SET_LIKELIST = 'SET_LIKELIST'

@@ -1,5 +1,24 @@
 <template>
   <div>
+    <div class="section0" v-if="showBtnGroup">
+      <div @click="like">
+        <el-badge class="mark" :value="likeCount" />
+        <img src="../../assets/like32.svg" alt="">
+      </div>
+      <div class="share" @click="share">
+        <img src="../../assets/share32.svg" alt="">
+      </div>
+      <div @click="collect">
+        <img src="../../assets/collect32.svg" alt="">
+      </div>
+    </div>
+    <div class="btnGroup" v-else>
+      <div @click="like" :class="likeit?'red':''" class="likeCount">
+        <el-badge class="mark" :value="likeCount" />
+      </div>
+      <div @click="collect"></div>
+      <div @click="share" class="share"></div>
+    </div>
     <div class="section1">
       <el-input
         type="textarea"
@@ -24,6 +43,8 @@
 
 <script>
   import api from '../../service/apiManage'
+  import ClipboardJS from 'clipboard'
+  import {mapGetters,mapActions} from 'vuex'
   export default {
     name: "comment",
     props:{
@@ -41,14 +62,66 @@
       },
       currentUser:{
         type:String
+      },
+      blogTitle:{
+        type:String
+      },
+      likeCount:{
+        type:Number
       }
     },
     data(){
       return{
         textarea:'',
+        showBtnGroup:window.innerWidth<950
+      }
+    },
+    computed:{
+      ...mapGetters([
+        'likeList'
+      ]),
+      likeit(){
+        return this.likeList
+          ? this.likeList.some((item)=>item.author===this.user&&item.blogDate===this.blogDate)
+          : false
       }
     },
     methods:{
+      ...mapActions([
+        'likethis'
+      ]),
+      share(){
+        const baseUrl = 'https://blog.calabash.top'
+        let that = this
+        let clipboard = new ClipboardJS('.share',{
+          text(){
+            return `${that.user}的文章 ${that.blogTitle} ${baseUrl+that.$route.fullPath}`
+          }
+        })
+        clipboard.on('success', function(e) {
+          that.$message.success('已复制到粘贴板')
+          e.clearSelection();
+        });
+      },
+      collect(){
+        this.$message.info('还没写啊:(')
+      },
+      like(){
+        if(this.user===this.currentUser){
+          this.$message.error('不准给自己点赞:(')
+          return
+        }
+        this.likethis({
+          blogDate:this.blogDate,
+          userName:this.user,
+          user:this.currentUser,
+          flag:this.likeit
+        }).then(res=>{
+          if(res.errno===0){
+            this.$emit('update:likeCount', res.res.count)
+          }
+        })
+      },
       send(){
         if(!this.currentUser){
           this.$message.error('请登录:)')
@@ -76,16 +149,63 @@
 </script>
 
 <style scoped>
-  .section1,.section2{
+  .section0,.section1,.section2{
     display: flex;
     flex-direction: column;
     background-color: rgb(247,247,247);
     padding:10px;
     margin: 10px 0;
   }
+  .section0{
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .section0>div{
+    cursor: pointer;
+    position: relative;
+  }
+  .btnGroup{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    left:calc(50% - 350px - 32px);
+    top:16rem;
+  }
+  .btnGroup>div{
+    position: relative;
+    height: 36px;
+    width: 36px;
+    margin: 10px;
+    border:1px solid rgba(123,123,123,.1);
+    background-color: rgb(245,245,245);
+    cursor:pointer;
+    border-radius: 50%;
+  }
+  .btnGroup>div:nth-child(1){
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iI0M2QzZDNiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4=)
+                no-repeat
+                center center;
+  }
+
+  .btnGroup>div:nth-child(2){
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOSI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTMuNiAxMi45NkgxMXYxaDIuNnYyLjZoMXYtMi42aDIuNnYtMWgtMi42di0yLjZoLTF2Mi42ek0xIDIuOTZoMTYuMnYxSDF2LTF6bTAgNC45NWgxNi4ydjFIMXYtMXptMCA1LjA1aDl2MUgxdi0xeiIvPjwvc3ZnPgo=)
+                no-repeat
+                center center;
+  }
+  .btnGroup>div:nth-child(3){
+    background: url(../../assets/分享.svg)
+                no-repeat
+                center center;
+  }
+  .mark{
+    position: absolute;
+    right:-7px;
+    top:-7px;
+  }
   .send{
     align-self: flex-end;
-    margin-top:10px
+    margin-top:10px;
   }
   .comment{
     display: flex;
@@ -109,6 +229,9 @@
     font-size: 16px;
     font-weight: 600;
     color:#333;
+  }
+  .red{
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4K)!important;
   }
   .text{
 

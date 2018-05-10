@@ -9,6 +9,8 @@
         :blogDate="idea.blogDate"
         :user="user"
         :currentUser="users.userName"
+        :blogTitle="idea.blogTitle"
+        :likeCount.sync="idea.likeCount"
         @commitSuccess="_getIdea"
       >
       </Comment>
@@ -87,7 +89,7 @@
 
 <style>
   .markdown-body{
-    max-width: 950px;
+    max-width: 700px;
   }
 
   .blog-nav {

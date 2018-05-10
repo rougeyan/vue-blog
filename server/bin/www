@@ -27,11 +27,11 @@ const options = {
 /**
  * Create HTTP server.
  */
-/*
-var server = http.createServer(app);
-*/
+var server = http.createServer(app).listen(3000);
 
+/*
 var server = spdy.createServer(options,app).listen(port);
+*/
 
 /**
  * Listen on provided port, on all network interfaces.

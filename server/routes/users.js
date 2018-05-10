@@ -54,7 +54,8 @@ router.use(async function(req, res, next) {
     'POST/checkStatus' ,//检查token
     'POST/files', //上传图片
     'GET/pv',
-    'POST/comment'
+    'POST/comment',
+    'POST/like'
   ]
   if(validToken.includes(req.method+req.path)){
     let tok = req.headers['authorization'] || req.body.token || '',
@@ -63,7 +64,7 @@ router.use(async function(req, res, next) {
       return res.json(response(1,'','没有权限'))
     }
     //冲突- -
-    if(req.path==='/comment'){
+    if(req.path==='/comment' || req.path==='/like'){
       userName = req.body.user
     }
     let data = await token._check(userName,tok)
@@ -283,5 +284,61 @@ router.get('/comment',async function(req,res){
     }
   })
 })
+//应该用redis俩搞,设计之初没有计划好,现在已经比较混乱了
+//喜欢/取消喜欢某文章
+router.post('/like',async function(req,res){
+  let {userName,user,blogDate,flag=false} = req.body
+  let query = await users.findOne({'userName':user})
+  if(query){
+    let liked
+    query.likeList.forEach((item,index)=>{
+      if(item.blogDate===blogDate && item.author===userName){
+        liked = true
+      }
+    })
+    if(liked){
+      //flag为true则是取消喜欢
+      if(flag){
+        let count = ''
+        query.likeList = query.likeList.filter((item)=>item.author!==userName || item.blogDate!==blogDate)
+        await query.save()
+        req._user.blogList.toObject().forEach((item,index)=>{
+          if(item.blogDate===blogDate){
+            if(req._user.blogList[index].likeCount===undefined){
+              req._user.blogList[index].likeCount = 0
+            }
+            req._user.blogList[index].likeCount -=1
+            count = req._user.blogList[index].likeCount
+          }
+        })
+        await req._user.save()
+        return res.json(response(0,{likeList:query.likeList,count:count},'已经失去你的爱:('))
+
+      }
+      return res.json(response(0,'','只能喜欢一次哦:)'))
+    }else{
+      let count = ''
+      query.likeList.push({
+        author:userName,
+        blogDate:blogDate
+      })
+      await query.save()
+      req._user.blogList.toObject().forEach((item,index)=>{
+        if(item.blogDate===blogDate){
+          if(req._user.blogList[index].likeCount===undefined){
+            req._user.blogList[index].likeCount = 0
+          }
+          req._user.blogList[index].likeCount +=1
+          count = req._user.blogList[index].likeCount
+        }
+      })
+      await req._user.save()
+      return res.json(response(0,{likeList:query.likeList,count:count},'已收到你的爱:)'))
+    }
+  }else{
+    return res.json(response(1,'','没有该用户'))
+  }
+})
+
 
 module.exports = router;

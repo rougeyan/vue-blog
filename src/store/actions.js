@@ -133,3 +133,12 @@ export const logout = function({commit,state},data){
     }
   })
 }
+
+export const likethis = function({commit,state},data){
+  return apiManage.like(data).then(res=>{
+    if(res.errno===0){
+      commit(types.SET_LIKELIST,res.res.likeList)
+      return res
+    }
+  })
+}

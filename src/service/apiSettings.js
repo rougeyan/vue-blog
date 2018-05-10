@@ -10,7 +10,8 @@ const path = [
   'post checkStatus',
   'post files',
   'get pv',
-  'post comment'
+  'post comment',
+  'post like'
 ]
 
 class BaseModule{
