@@ -26,7 +26,7 @@
         placeholder="说说你的看法"
         v-model="textarea">
       </el-input>
-      <el-button plain class="send" @click="send()">发送</el-button>
+      <el-button plain class="send" @click="send()" :loading="showLoading">发送</el-button>
     </div>
     <div class="section2">
       <div v-for="item in commentList" class="comment">
@@ -73,7 +73,8 @@
     data(){
       return{
         textarea:'',
-        showBtnGroup:window.innerWidth<950
+        showBtnGroup:window.innerWidth<950,
+        showLoading:false
       }
     },
     computed:{
@@ -117,7 +118,7 @@
           user:this.currentUser,
           flag:this.likeit
         }).then(res=>{
-          if(res.errno===0){
+          if(res && res.errno===0){
             this.$emit('update:likeCount', res.res.count)
           }
         })
@@ -131,6 +132,7 @@
           this.$message.error('评论长度不足:(')
           return false
         }
+        this.showLoading = true
         api.postComment({
           blogDate:this.blogDate,
           userName:this.user,
@@ -139,6 +141,7 @@
           text:this.textarea,
           date:new Date().toLocaleString('zh',{hour12:false})
         }).then(res=>{
+          this.showLoading = false
           if(res.errno===0){
             this.$emit('commitSuccess')
           }

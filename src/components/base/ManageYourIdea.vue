@@ -45,7 +45,7 @@
 import ClipboardJS from 'clipboard'
 import {mapActions,mapGetters} from 'vuex'
 import {formatDate} from '../../lib/lib'
-import axios from 'axios'
+import api from '../../service/apiManage'
 import debounce from 'lodash/debounce'
 
 export default{
@@ -94,15 +94,15 @@ export default{
     upload(){
       let formData = new FormData()
       formData.append('file',this.file)
-      axios.post('/api/files',formData,{
+      api.upload(formData,{
         headers:{
           'Content-Type':'multipart/form-data',
           'Authorization':this.token,
           'userName':this.users.userName
         }
       }).then(res=>{
-        if(res.data.res){
-          this.imgpath = res.data.res
+        if(res.res){
+          this.imgpath = res.res
         }
       })
     },
