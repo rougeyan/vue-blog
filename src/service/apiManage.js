@@ -57,7 +57,7 @@ class apiManage extends BaseModule {
     return this.get('ideas',obj)
   }
   upload(obj,config){
-    return this.post('files',obj,{transformRequest:[(data)=>data],...config})
+    return this.post('files',obj,config)
   }
   //获取pv
   getPv(obj){
@@ -65,11 +65,7 @@ class apiManage extends BaseModule {
   }
   //ip地址查询
   getIpAddress(obj){
-    return this.get('https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json',obj, {
-        headers:{
-          'authorization':"APPCODE b62dc60dc06342848faf46fec2ce4293"
-        }
-    })
+    return this.get('https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json',obj)
   }
   //发布评论
   postComment(obj){
@@ -82,6 +78,10 @@ class apiManage extends BaseModule {
   //喜欢/取消喜欢
   like(obj){
     return this.post('like',obj)
+  }
+  //设置头像
+  setAvatar(obj,config){
+    return this.post('avatar',obj,config)
   }
 }
 

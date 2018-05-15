@@ -142,3 +142,12 @@ export const likethis = function({commit,state},data){
     }
   })
 }
+
+/*export const setAvatar = function({commit,state},data,config){
+  console.log({commit,state},data,config)
+  apiManage.setAvatar(data,config).then(res=>{
+    if(res.errno===0){
+      commit(types.SET_AVATAR,res.res)
+    }
+  })
+}*/

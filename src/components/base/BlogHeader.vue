@@ -5,9 +5,9 @@
 </template>
 
 <script>
-  export default{
-    name:'BlogHeader',
-    props:['user','users'],
-  }
+export default{
+  name: 'BlogHeader',
+  props: ['user', 'users']
+}
 </script>
 

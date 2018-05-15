@@ -42,113 +42,113 @@
 </template>
 
 <script>
-  import api from '../../service/apiManage'
-  import ClipboardJS from 'clipboard'
-  import {mapGetters,mapActions} from 'vuex'
-  export default {
-    name: "comment",
-    props:{
-      commentList:{
-        type:Array,
-        default(){
-          return []
-        }
-      },
-      blogDate:{
-        type:String
-      },
-      user:{
-        type:String
-      },
-      currentUser:{
-        type:String
-      },
-      blogTitle:{
-        type:String
-      },
-      likeCount:{
-        type:Number
+import api from '../../service/apiManage'
+import ClipboardJS from 'clipboard'
+import {mapGetters, mapActions} from 'vuex'
+export default {
+  name: 'comment',
+  props: {
+    commentList: {
+      type: Array,
+      default () {
+        return []
       }
     },
-    data(){
-      return{
-        textarea:'',
-        showBtnGroup:window.innerWidth<950,
-        showLoading:false
-      }
+    blogDate: {
+      type: String
     },
-    computed:{
-      ...mapGetters([
-        'likeList'
-      ]),
-      likeit(){
-        return this.likeList
-          ? this.likeList.some((item)=>item.author===this.user&&item.blogDate===this.blogDate)
-          : false
-      }
+    user: {
+      type: String
     },
-    methods:{
-      ...mapActions([
-        'likethis'
-      ]),
-      share(){
-        const baseUrl = 'https://blog.calabash.top'
-        let that = this
-        let clipboard = new ClipboardJS('.share',{
-          text(){
-            return `${that.user}的文章 ${that.blogTitle} ${baseUrl+that.$route.fullPath}`
-          }
-        })
-        clipboard.on('success', function(e) {
-          that.$message.success('已复制到粘贴板')
-          e.clearSelection();
-        });
-      },
-      collect(){
-        this.$message.info('还没写啊:(')
-      },
-      like(){
-        if(this.user===this.currentUser){
-          this.$message.error('不准给自己点赞:(')
-          return
+    currentUser: {
+      type: String
+    },
+    blogTitle: {
+      type: String
+    },
+    likeCount: {
+      type: Number
+    }
+  },
+  data () {
+    return {
+      textarea: '',
+      showBtnGroup: window.innerWidth < 950,
+      showLoading: false
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'likeList'
+    ]),
+    likeit () {
+      return this.likeList
+        ? this.likeList.some((item) => item.author === this.user && item.blogDate === this.blogDate)
+        : false
+    }
+  },
+  methods: {
+    ...mapActions([
+      'likethis'
+    ]),
+    share () {
+      const baseUrl = 'https://blog.calabash.top'
+      let that = this
+      let clipboard = new ClipboardJS('.share', {
+        text () {
+          return `${that.user}的文章 ${that.blogTitle} ${baseUrl + that.$route.fullPath}`
         }
-        this.likethis({
-          blogDate:this.blogDate,
-          userName:this.user,
-          user:this.currentUser,
-          flag:this.likeit
-        }).then(res=>{
-          if(res && res.errno===0){
-            this.$emit('update:likeCount', res.res.count)
-          }
-        })
-      },
-      send(){
-        if(!this.currentUser){
-          this.$message.error('请登录:)')
-          return false
-        }
-        if(this.textarea.length<6){
-          this.$message.error('评论长度不足:(')
-          return false
-        }
-        this.showLoading = true
-        api.postComment({
-          blogDate:this.blogDate,
-          userName:this.user,
-          user:this.currentUser,
-          avatar:'',
-          text:this.textarea,
-          date:new Date().toLocaleString('zh',{hour12:false})
-        }).then(res=>{
-          this.showLoading = false
-          if(res.errno===0){
-            this.$emit('commitSuccess')
-          }
-        })
+      })
+      clipboard.on('success', function (e) {
+        that.$message.success('已复制到粘贴板')
+        e.clearSelection()
+      })
+    },
+    collect () {
+      this.$message.info('还没写啊:(')
+    },
+    like () {
+      if (this.user === this.currentUser) {
+        this.$message.error('不准给自己点赞:(')
+        return
       }
+      this.likethis({
+        blogDate: this.blogDate,
+        userName: this.user,
+        user: this.currentUser,
+        flag: this.likeit
+      }).then(res => {
+        if (res && res.errno === 0) {
+          this.$emit('update:likeCount', res.res.count)
+        }
+      })
+    },
+    send () {
+      if (!this.currentUser) {
+        this.$message.error('请登录:)')
+        return false
+      }
+      if (this.textarea.length < 6) {
+        this.$message.error('评论长度不足:(')
+        return false
+      }
+      this.showLoading = true
+      api.postComment({
+        blogDate: this.blogDate,
+        userName: this.user,
+        user: this.currentUser,
+        avatar: '',
+        text: this.textarea,
+        date: new Date().toLocaleString('zh', {hour12: false})
+      }).then(res => {
+        this.showLoading = false
+        if (res.errno === 0) {
+          this.$emit('commitSuccess')
+        }
+      })
     }
   }
+}
 </script>
 
 <style scoped>

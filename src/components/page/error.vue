@@ -6,8 +6,8 @@
 
 <script type="text/ecmascript-6">
 export default{
-  name:'error',
-  props:['type'],
+  name: 'error',
+  props: ['type']
 }
 </script>
 

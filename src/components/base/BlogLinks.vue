@@ -16,16 +16,16 @@
 </template>
 
 <script type="text/ecmascript-6">
-  export default{
-    name:'BlogLinks',
-    props:['infoList'],
-    methods:{
-      login(){
-        this.$emit('openDialog')
-      },
+export default{
+  name: 'BlogLinks',
+  props: ['infoList'],
+  methods: {
+    login () {
+      this.$emit('openDialog')
     }
-
   }
+
+}
 </script>
 
 

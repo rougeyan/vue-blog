@@ -15,19 +15,19 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {formatDateEng,throttle} from '../../lib/lib'
-import { mapActions,mapMutations } from 'vuex'
+import {formatDateEng, throttle} from '../../lib/lib'
+import { mapActions, mapMutations } from 'vuex'
 export default{
-  name:'BlogBody',
-  props:['user','users','currentBlogList'],
-  data(){
-    return{
-      busy:false,
-      pgN:1,
-      pgS:8,
+  name: 'BlogBody',
+  props: ['user', 'users', 'currentBlogList'],
+  data () {
+    return {
+      busy: false,
+      pgN: 1,
+      pgS: 8
     }
   },
-  methods:{
+  methods: {
     ...mapActions([
       'getCurrentBlogList',
       'getMoreBlog'
@@ -35,21 +35,21 @@ export default{
     ...mapMutations([
       'LOAD_MORE'
     ]),
-    formatDate(value){
+    formatDate (value) {
       return formatDateEng(value)
     },
-    loadMore(){
-      async function getNext(){
+    loadMore () {
+      async function getNext () {
         this.busy = true
         this.pgN++
-        let res = await this.getMoreBlog({userName:this.user,type:'public',pgN:this.pgN,pgS:this.pgS})
-        res==='gg'?this.busy=true:this.busy=false
+        let res = await this.getMoreBlog({userName: this.user, type: 'public', pgN: this.pgN, pgS: this.pgS})
+        res === 'gg' ? this.busy = true : this.busy = false
       }
       getNext.bind(this)()
-    },
+    }
   },
-  created(){
-    this.getCurrentBlogList({userName:this.user,type:'public',pgN:1,pgS:this.pgS})
+  created () {
+    this.getCurrentBlogList({userName: this.user, type: 'public', pgN: 1, pgS: this.pgS})
   }
 }
 </script>

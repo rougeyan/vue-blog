@@ -30,56 +30,56 @@
 import {mapActions} from 'vuex'
 
 export default{
-  name:'LoginDialog',
-  props:{
-    openLoginDialog:{
-      type:Boolean,
-      default:false
+  name: 'LoginDialog',
+  props: {
+    openLoginDialog: {
+      type: Boolean,
+      default: false
     }
   },
-  computed:{
-    signIn(){
-      return this.activeName==='login'? 'LOG IN': 'SIGN UP'
+  computed: {
+    signIn () {
+      return this.activeName === 'login' ? 'LOG IN' : 'SIGN UP'
     }
   },
-  data(){
-    return{
-      activeName:'login',
-      form:{
-        userName:'',
-        userPwd:''
+  data () {
+    return {
+      activeName: 'login',
+      form: {
+        userName: '',
+        userPwd: ''
       },
-      rules:{
-        userName:[{ required: true, message: '请输入用户名', trigger: 'blur' },
-                  { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }],
-        userPwd:[{ required: true, message: '请输入密码', trigger: 'blur' },
-                  { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }]
+      rules: {
+        userName: [{ required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }],
+        userPwd: [{ required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }]
       }
     }
   },
-  methods:{
+  methods: {
     ...mapActions([
       'login',
       'register'
     ]),
-    handleClose(){
+    handleClose () {
       this.$refs['form'].resetFields()
       this.$emit('closeDialog')
     },
-    sendType(){
-      async function a(){
-        if(this.activeName==='login'){
+    sendType () {
+      async function a () {
+        if (this.activeName === 'login') {
           await this.login(this.form)
-        }else{
+        } else {
           await this.register(this.form)
         }
         this.handleClose()
       }
       a.bind(this)()
     },
-    sendRequest(){
-      this.$refs['form'].validate((valid)=>{
-        if(valid){
+    sendRequest () {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
           this.sendType()
         }
       })

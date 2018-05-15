@@ -4,6 +4,7 @@ let userSchema = new mongoose.Schema({
   "userId":String,
   "userName":String,
   "userPwd":String,
+  "avatar":String,
   "userInfo":{
     "twitter":String,
     "github":String,
@@ -22,7 +23,6 @@ let userSchema = new mongoose.Schema({
     "likeCount":Number,
     "comment":[{
       "user":String,
-      "avatar":String,
       "date":String,
       "text":String
     }]

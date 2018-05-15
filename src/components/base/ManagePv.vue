@@ -40,39 +40,39 @@
 </template>
 
 <script>
-  import api from '../../service/apiManage'
-  import {pvData} from '../../lib/lib'
-  import {mapGetters} from 'vuex'
-  export default {
-    name: "manage-pv",
-    data(){
-      return{
-        originData:[],
-        date:new Date().toLocaleString('zh').split(' ')[0].replace(/\//g,'-')
-      }
-    },
-    computed:{
-      ...mapGetters([
-        'token',
-        'userName'
-      ])
-    },
-    methods:{
-      getPv(){
-        (async function(){
-          let res = await api.getPv({date:this.date,userName:this.userName})
-          if(res.errno ===0){
-            this.originData = await pvData(res.res)
-          }else{
-            this.$message.error('出现错误')
-          }
-        }.bind(this))()
-      }
-    },
-    created(){
-      this.getPv()
+import api from '../../service/apiManage'
+import {pvData} from '../../lib/lib'
+import {mapGetters} from 'vuex'
+export default {
+  name: 'manage-pv',
+  data () {
+    return {
+      originData: [],
+      date: new Date().toLocaleString('zh').split(' ')[0].replace(/\//g, '-')
     }
+  },
+  computed: {
+    ...mapGetters([
+      'token',
+      'userName'
+    ])
+  },
+  methods: {
+    getPv () {
+      (async function () {
+        let res = await api.getPv({date: this.date, userName: this.userName})
+        if (res.errno === 0) {
+          this.originData = await pvData(res.res)
+        } else {
+          this.$message.error('出现错误')
+        }
+      }.bind(this))()
+    }
+  },
+  created () {
+    this.getPv()
   }
+}
 </script>
 
 <style scoped>

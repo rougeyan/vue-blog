@@ -79,6 +79,12 @@ const mutations = {
   /*设置喜欢列表*/
   [types.SET_LIKELIST](state,data){
     state.users.likeList = data
+  },
+  [types.SET_AVATAR](state,data){
+    state.users.avatar = data
+  },
+  [types.SET_COMMENT_LIST](state,data){
+    state.currentBlog.comment = data
   }
 }
 export default  mutations

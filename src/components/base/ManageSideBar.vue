@@ -17,6 +17,10 @@
       <i class="el-icon-setting"></i>
       <span slot="title">个人设置</span>
     </el-menu-item>
+    <el-menu-item index="chat">
+      <i class="el-icon-message"></i>
+      <span slot="title">站内信</span>
+    </el-menu-item>
     <el-menu-item index="pv" v-if="userName==='Calabash'">
       <i class="el-icon-bell"></i>
       <span  slot="title">日志</span>
@@ -37,39 +41,39 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapMutations,mapActions,mapGetters} from 'vuex'
+import {mapMutations, mapActions, mapGetters} from 'vuex'
 export default{
-  name:'ManageSideBar',
-  data(){
-    return{
-      isCollapse:window.innerWidth<480
+  name: 'ManageSideBar',
+  data () {
+    return {
+      isCollapse: window.innerWidth < 480
     }
   },
-  computed:{
+  computed: {
     ...mapGetters([
       'userName'
     ])
   },
-  methods:{
+  methods: {
     ...mapMutations([
       'BACK_INDEX'
     ]),
     ...mapActions([
       'logout'
     ]),
-    _logout(){
-      this.logout({userName:this.userName})
+    _logout () {
+      this.logout({userName: this.userName})
     },
-    handleResize(){
-      this.isCollapse = window.innerWidth<480
+    handleResize () {
+      this.isCollapse = window.innerWidth < 480
     }
   },
-  mounted(){
+  mounted () {
     window.addEventListener('resize', this.handleResize)
   },
-  beforeDestroy(){
+  beforeDestroy () {
     window.removeEventListener('resize', this.handleResize)
-  },
+  }
 }
 </script>
 

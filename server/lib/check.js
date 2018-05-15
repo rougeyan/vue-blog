@@ -1,6 +1,7 @@
 const fs = require('fs')
 const request = require('superagent')
 const path = require('path')
+const {exec} = require('child_process')
 const filepath = '/alidata/server/nginx-1.4.4/conf/vhosts/blog.conf'
 const filename = path.relative(__dirname,filepath)
 const baseUrl = 'https://blog.calabash.top'
@@ -16,7 +17,7 @@ async function getHtml(){
 
 async function init(){
   let source = await getHtml()
-  fs.readFile(filename,(err,data)=>{
+  return fs.readFile(filename,(err,data)=>{
     let str = data.toString()
     let obj = str.match(fileRegex)
     str = str.replace(fileRegex,function(match){
@@ -25,6 +26,10 @@ async function init(){
     fs.writeFile(filename,str,(err)=>{
       if(err) return false
       else{
+        exec('nginx -s reload',(err)=>{
+          if(err) return false
+          console.log('重启nginx成功')
+        })
         return true
       }
     })

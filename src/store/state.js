@@ -13,7 +13,7 @@ const initState = {
   redirectTo:'',
   //弹窗控制
   openLoginDialog:false
-}
+};
 
 const state = {
   ...initState,
@@ -21,7 +21,7 @@ const state = {
   initState(){
     return initState
   }
-}
+};
 
 export default state
 

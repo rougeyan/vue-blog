@@ -31,3 +31,5 @@ export const blogList = state=>state.users.blogList
 export const token = state=>state.token
 
 export const likeList = state =>state.users.likeList || []
+
+export const avatar = state => state.users.avatar || ''

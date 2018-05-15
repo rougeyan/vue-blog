@@ -27,6 +27,17 @@ const filterProp = (item)=>{
   return newItem
 }
 const _Loginfilter = {'userPwd':0,'__v':0,'blogList':0}
+
+//获取用户某个属性
+async function getUserProp(user,key){
+  let doc = await users.findOne({'userName':user})
+  if(doc){
+    return doc[key] || ''
+  }
+  return false
+}
+
+
 //记录IP
 router.use(function(req,res,next){
   let ip = req.headers['x-forwarded-for'] || // 判断是否有反向代理 IP
@@ -55,7 +66,8 @@ router.use(async function(req, res, next) {
     'POST/files', //上传图片
     'GET/pv',
     'POST/comment',
-    'POST/like'
+    'POST/like',
+    'POST/avatar'
   ]
   if(validToken.includes(req.method+req.path)){
     let tok = req.headers['authorization'] || req.body.token || '',
@@ -67,6 +79,7 @@ router.use(async function(req, res, next) {
     if(req.path==='/comment' || req.path==='/like'){
       userName = req.body.user
     }
+    console.log(userName,tok)
     let data = await token._check(userName,tok)
     if(data){
       next()
@@ -86,10 +99,9 @@ router.use(async function(req,res,next){
     '/login',
     '/files',
     '/pv',
-
   ]
   if(!noValidUser.includes(req.path)){
-    let userName = req.body.userName || req.query.userName
+    let userName = req.body.userName || req.query.userName || req.headers['username']
     let user = await users.findOne({'userName':userName})
     if(user){
       req._user = user
@@ -100,6 +112,10 @@ router.use(async function(req,res,next){
   }else{
     next()
   }
+})
+//测试
+router.get('/',function(req,res){
+	res.send('QAQ')
 })
 //注册功能
 router.post('/register',async function(req, res) {
@@ -163,7 +179,6 @@ router.put('/userinfo',async function(req,res){
 router.get('/userinfo',async function(req,res){
   return res.json(response(0,req._user.userInfo,''))
 })
-
 //发布博客功能
 router.post('/ideas',async function(req,res){
   req._user.blogList.push({
@@ -215,7 +230,7 @@ router.put('/ideas/:blogDate',async function(req,res){
 router.get('/ideas/:blogDate',async function(req,res){
   let blogDate = req.params.blogDate
   let list = req._user.blogList,
-    obj = {}
+      obj = {}
   list.forEach(function(item,index){
     if(item.blogDate===blogDate){
       obj = Object.assign(item.toObject(),{
@@ -230,6 +245,12 @@ router.get('/ideas/:blogDate',async function(req,res){
   }else{
     obj.count = await token._getValue(blogDate)
   }
+  let data = []
+  for(let item of obj.comment){
+    let avatar = await getUserProp(item.user,'avatar');
+    data.push({...item,avatar})
+  }
+  obj.comment = data
   return obj.blogDate
     ? res.json(response(0,obj,''))
     : res.json(response(1,'','文章不存在'))
@@ -255,6 +276,13 @@ router.post('/files',upload.single('file'),async function(req,res){
   let path = `https://blog.calabash.top/${req.file.filename}`
   return res.json(response(0,path,''))
 })
+//头像上传
+router.post('/avatar',upload.single('avatar'),async function(req,res){
+  let path = `https://blog.calabash.top/${req.file.filename}`
+  req._user.avatar = path
+  await req._user.save()
+  return res.json(response(0,path,'设置成功'))
+})
 //获取IP地址
 router.get('/pv',async function(req,res){
   let date= req.query.date
@@ -278,11 +306,13 @@ router.post('/comment',async function(req,res){
 })
 //获取评论
 router.get('/comment',async function(req,res){
-  req._user.blogList.toObject().forEach((item)=>{
-    if(item.blogDate===req.query.blogDate){
-      return res.json(response(0,item.comment,''))
-    }
-  })
+  let blog = req._user.blogList.toObject().filter((item)=>item.blogDate===req.query.blogDate)[0]
+  let data = []
+  for(let item of blog.comment){
+    let avatar = await getUserProp(item.user,'avatar');
+    data.push({avatar,...item})
+  }
+  return res.json(response(0,data,''))
 })
 //应该用redis俩搞,设计之初没有计划好,现在已经比较混乱了
 //喜欢/取消喜欢某文章

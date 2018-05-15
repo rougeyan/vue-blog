@@ -28,63 +28,63 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapActions ,mapGetters} from 'vuex'
-  import {formatDateEng,formatDate} from '../../lib/lib'
-  import Comment from './Comment.vue'
-  export default{
-    props:['id','user','users','currentBlogList'],
-    watch: {
-      // 如果路由有变化，会再次执行该方法
-      '$route': '_getIdea'
-    },
-    data(){
-      return{
-        dialogVisble:false,
-        dialogSrc:'',
-        commentList:[]
-      }
-    },
-    components:{
-      Comment
-    },
-    computed: {
-      compiledMarkdown: function () {
-        return marked(this.idea.blogContent, { sanitize: true })
-      },
-      formatDate(){
-        return formatDateEng(this.idea.blogDate)
-      },
-      ...mapGetters({idea:'currentBlog'})
-    },
-    methods: {
-      ...mapActions([
-        'getCurrentBlogList',
-        'getIdea'
-      ]),
-      _getIdea(){
-        this.getIdea({userName:this.user,blogDate:this.id})
-      },
-      hasSiblings(arr){
-        return index=>property=>arr[index]?arr[index][property]:'0'
-      },
-      openOtherBlogs(value){
-        if(value && value!=='0'){
-          this.$router.push(`${value}`)
-        }else{
-          this.$message.info('暂不可用！')
-        }
-      },
-      scaleImg(e){
-        if(e.target.src){
-          this.dialogSrc = e.target.src
-          this.dialogVisble=true
-        }
-      }
-    },
-    created(){
-      this._getIdea()
+import { mapActions, mapGetters} from 'vuex'
+import {formatDateEng, formatDate} from '../../lib/lib'
+import Comment from './Comment.vue'
+export default{
+  props: ['id', 'user', 'users', 'currentBlogList'],
+  watch: {
+    // 如果路由有变化，会再次执行该方法
+    '$route': '_getIdea'
+  },
+  data () {
+    return {
+      dialogVisble: false,
+      dialogSrc: '',
+      commentList: []
     }
+  },
+  components: {
+    Comment
+  },
+  computed: {
+    compiledMarkdown: function () {
+      return marked(this.idea.blogContent, { sanitize: true })
+    },
+    formatDate () {
+      return formatDateEng(this.idea.blogDate)
+    },
+    ...mapGetters({idea: 'currentBlog'})
+  },
+  methods: {
+    ...mapActions([
+      'getCurrentBlogList',
+      'getIdea'
+    ]),
+    _getIdea () {
+      this.getIdea({userName: this.user, blogDate: this.id})
+    },
+    hasSiblings (arr) {
+      return index => property => arr[index] ? arr[index][property] : '0'
+    },
+    openOtherBlogs (value) {
+      if (value && value !== '0') {
+        this.$router.push(`${value}`)
+      } else {
+        this.$message.info('暂不可用！')
+      }
+    },
+    scaleImg (e) {
+      if (e.target.src) {
+        this.dialogSrc = e.target.src
+        this.dialogVisble = true
+      }
+    }
+  },
+  created () {
+    this._getIdea()
   }
+}
 </script>
 
 <style>

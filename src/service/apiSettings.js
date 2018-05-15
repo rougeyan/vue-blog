@@ -1,26 +1,30 @@
 import axios from 'axios'
 import qs from 'qs'
 import {Message} from 'element-ui'
+import vuex from '../store/index'
 
 class BaseModule{
   constructor(){
     this.$http = axios.create({
       timeout: 10000,  // 请求超时时间
-      baseURL:'/api'
-    })
-    this.dataMethodDefaults = {
+      baseURL:'/api',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        'authorization': JSON.parse(localStorage.vuex).token
-      },
-      transformRequest: [function(data){
-        return qs.stringify(data)
-      }]
-    }
+        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+      }
+    })
     this.cache = []
     this.expireTime = 3000
     //请求拦截器
     this.$http.interceptors.request.use(config => {
+      if(vuex.state.token){
+        config.headers['Authorization'] = vuex.state.token
+      }
+      if(config.url==='https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json'){
+        config.headers['Authorization']="APPCODE b62dc60dc06342848faf46fec2ce4293"
+      }
+      if((config.method === 'post' || config.method === 'put' || config.method === 'delete') && config.headers["Content-Type"]==='application/x-www-form-urlencoded;charset=utf-8'){
+        config.data = qs.stringify(config.data)
+      }
       if(config.method === 'post'){
         let hitCache = this.cache.filter((item)=>{
           return (item.timeStamp + this.expireTime) > new Date().getTime()
@@ -68,6 +72,7 @@ class BaseModule{
         })
       }
     }, error =>{
+      console.log(error)
       if(error.isCustom){
         Message({
           message:error.msg,
@@ -84,13 +89,13 @@ class BaseModule{
     })
   }
   get(url,data={},config={}){
-    return this.$http.get(url,{params:data,...this.dataMethodDefaults,...config})
+    return this.$http.get(url,{params:data,...config})
   }
-  post(url,data=undefined,config={}){
-    return this.$http.post(url,data,{ ...this.dataMethodDefaults, ...config })
+  post(url,data={},config={}){
+    return this.$http.post(url,data,config)
   }
-  put(url,data=undefined,config={}){
-    return this.$http.put(url,data,{ ...this.dataMethodDefaults, ...config })
+  put(url,data={},config={}){
+    return this.$http.put(url,data,config)
   }
   delete(url,config){
     return this.$http.delete(url,config)

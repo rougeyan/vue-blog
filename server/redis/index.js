@@ -13,6 +13,5 @@ redis.on("error", function (error) {
   console.log(error);
 });
 
-console.log(process.env)
 
 module.exports = redis

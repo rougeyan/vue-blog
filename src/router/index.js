@@ -67,6 +67,10 @@ const router = new Router({
           name:'pv',
           path:'pv',
           component: resolve => require(['../components/base/ManagePv.vue'], resolve)
+        }, {
+          name:'chat',
+          path:'chat',
+          component: ()=>import('../components/base/Chat.vue')
         }
       ]
     }

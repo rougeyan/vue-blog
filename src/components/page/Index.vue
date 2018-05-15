@@ -13,191 +13,190 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import BlogHeader from '../base/BlogHeader'
-  import BlogLinks from  '../base/BlogLinks'
-  import LoginDialog from '../base/LoginDialog'
-  import {mapMutations,mapGetters,mapActions} from 'vuex'
-  export default{
-    name:'index',
-    //来源为router动态参数
-    props:['user'],
-    data(){
-      return{
-        infoList:{
-          twitter:'http://www.lanternpro.site/',
-          github:'https://github.com/',
-          weibo:'https://weibo.com/'
-        }
+import BlogHeader from '../base/BlogHeader'
+import BlogLinks from '../base/BlogLinks'
+import LoginDialog from '../base/LoginDialog'
+import {mapMutations, mapGetters, mapActions} from 'vuex'
+export default{
+  name: 'index',
+  // 来源为router动态参数
+  props: ['user'],
+  data () {
+    return {
+      infoList: {
+        twitter: 'http://www.lanternpro.site/',
+        github: 'https://github.com/',
+        weibo: 'https://weibo.com/'
       }
-    },
-    components:{
-      'blog-index-header':BlogHeader,
-      'blog-index-links':BlogLinks,
-      'login-dialog':LoginDialog
-    },
-    computed:{
-      ...mapGetters([
-        'openLoginDialog',
-        'loginStatus',
-        'users',
-        'token',
-        'userInfo',
-        'currentBlogList'
-      ])
-    },
-    watch: {
-      // 如果路由有变化，会再次执行该方法
-      '$route': function(){
-        this.getInfo()
-      },
-    },
-    methods:{
-      ...mapMutations([
-        'OPEN_LOGIN_DIALOG'
-      ]),
-      ...mapActions([
-        'checkStatus',
-        'getUserInfo'
-      ]),
-      openDialog(){
-        //如果本地有token,检验token,没有就打开登录窗口
-        if(this.token){
-          this.checkStatus({userName:this.users.userName})
-        }else{
-          this.OPEN_LOGIN_DIALOG(true)
-        }
-      },
-      closeDialog(){
-        if(this.openLoginDialog){
-          this.OPEN_LOGIN_DIALOG(false)
-        }
-      },
-      getInfo(){
-        this.getUserInfo({userName:this.user}).then(res=>{
-          if(res===1){
-            this.infoList = this.userInfo
-          }else{
-            this.infoList = res
-          }
-        })
-      }
-    },
-    created(){
-      this.getInfo()
-    },
-    mounted(){
-      let count=70,distance=80
-      if(window.innerWidth<600){
-        count=30
-        distance=80
-      }
-      //获取canvas上下文
-      const canvasBody = document.getElementById('canvas'),
-        drawArea = canvasBody.getContext('2d')
-      const opts = {
-        ballColor : 'rgb(200,200,200)',
-        lineColor : 'rgb(153,153,153)',
-        ballCount : count,
-        linkDistance : distance,
-        defaultRadius:1,
-        variantRadius:2,
-        defaultSpeed:0.5,
-        variantSpeed:0.5,
-      }
-      let w,h,ballList=[],tid,delay=200
-      let rgb = opts.lineColor.match(/\d+/g)
-      function resizeReset() {
-        w = canvasBody.width = window.innerWidth;
-        h = canvasBody.height = window.innerHeight;
-      }
-      function checkDistance(x1,y1,x2,y2){
-        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2))
-      }
-      function linkPoints(ball,ballList){
-        for(let i=0,l=ballList.length;i<l;i++){
-          let distance = checkDistance(ball.x,ball.y,ballList[i].x,ballList[i].y)
-          let opacity = 1 - distance/opts.linkDistance
-          if(opacity>0){
-            drawArea.lineWidth = 0.5
-            drawArea.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`
-            drawArea.beginPath()
-            drawArea.moveTo(ball.x,ball.y)
-            drawArea.lineTo(ballList[i].x,ballList[i].y)
-            drawArea.closePath()
-            drawArea.stroke()
-          }
-        }
-      }
-      function deBouncer(){
-        clearTimeout(tid)
-        tid = setTimeout(function(){
-          resizeReset()
-        },delay)
-      }
-      function setup(){
-        resizeReset()
-        for(let i=0,l=opts.ballCount;i<l;i++){
-          ballList.push(new Ball())
-        }
-        window.requestAnimationFrame(loop)
-      }
-      function loop(){
-        window.requestAnimationFrame(loop)
-        drawArea.clearRect(0,0,w,h)
-        for(let i=0,l=ballList.length;i<l;i++){
-          ballList[i].move()
-          ballList[i].draw()
-        }
-        for(let i=0,l=ballList.length;i<l;i++){
-          linkPoints(ballList[i],ballList)
-        }
-      }
-      class Ball{
-        constructor(){
-          this.x = Math.random() * w
-          this.y = Math.random() * h
-          this.speed = opts.defaultSpeed + Math.random() * opts.variantSpeed
-          this.angle = Math.floor(Math.random() * 360)
-          this.color = opts.ballColor
-          this.radius = opts.defaultRadius + Math.random() * opts.variantRadius
-          this.vector = {
-            x: Math.cos(this.angle) * this.speed,
-            y: Math.sin(this.angle) * this.speed
-          }
-        }
-        hitCheck(){
-          if(this.x >= w || this.x <= 0){
-            this.vector.x *= -1
-          }
-          if(this.y >= h || this.y <= 0){
-            this.vector.y *= -1
-          }
-          if(this.x > w) this.x = w;
-          if(this.x <0) this.x = 0;
-          if(this.y > h) this.y = h;
-          if(this.y <0) this.y =0 ;
-        }
-        move(){
-          this.hitCheck()
-          this.x += this.vector.x
-          this.y += this.vector.y
-        }
-        draw(){
-          drawArea.beginPath()
-          drawArea.arc(this.x,this.y,this.radius,0,Math.PI*2)
-          drawArea.closePath()
-          drawArea.strokeStyle = this.color
-          drawArea.stroke()
-
-        }
-      }
-      window.addEventListener("resize", function(){
-        deBouncer();
-      });
-      resizeReset()
-      setup()
     }
+  },
+  components: {
+    'blog-index-header': BlogHeader,
+    'blog-index-links': BlogLinks,
+    'login-dialog': LoginDialog
+  },
+  computed: {
+    ...mapGetters([
+      'openLoginDialog',
+      'loginStatus',
+      'users',
+      'token',
+      'userInfo',
+      'currentBlogList'
+    ])
+  },
+  watch: {
+    // 如果路由有变化，会再次执行该方法
+    '$route': function () {
+      this.getInfo()
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'OPEN_LOGIN_DIALOG'
+    ]),
+    ...mapActions([
+      'checkStatus',
+      'getUserInfo'
+    ]),
+    openDialog () {
+      // 如果本地有token,检验token,没有就打开登录窗口
+      if (this.token) {
+        this.checkStatus({userName: this.users.userName})
+      } else {
+        this.OPEN_LOGIN_DIALOG(true)
+      }
+    },
+    closeDialog () {
+      if (this.openLoginDialog) {
+        this.OPEN_LOGIN_DIALOG(false)
+      }
+    },
+    getInfo () {
+      this.getUserInfo({userName: this.user}).then(res => {
+        if (res === 1) {
+          this.infoList = this.userInfo
+        } else {
+          this.infoList = res
+        }
+      })
+    }
+  },
+  created () {
+    this.getInfo()
+  },
+  mounted () {
+    let count = 70, distance = 80
+    if (window.innerWidth < 600) {
+      count = 30
+      distance = 80
+    }
+    // 获取canvas上下文
+    const canvasBody = document.getElementById('canvas'),
+      drawArea = canvasBody.getContext('2d')
+    const opts = {
+      ballColor: 'rgb(200,200,200)',
+      lineColor: 'rgb(153,153,153)',
+      ballCount: count,
+      linkDistance: distance,
+      defaultRadius: 1,
+      variantRadius: 2,
+      defaultSpeed: 0.5,
+      variantSpeed: 0.5
+    }
+    let w, h, ballList = [], tid, delay = 200
+    let rgb = opts.lineColor.match(/\d+/g)
+    function resizeReset () {
+      w = canvasBody.width = window.innerWidth
+      h = canvasBody.height = window.innerHeight
+    }
+    function checkDistance (x1, y1, x2, y2) {
+      return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))
+    }
+    function linkPoints (ball, ballList) {
+      for (let i = 0, l = ballList.length; i < l; i++) {
+        let distance = checkDistance(ball.x, ball.y, ballList[i].x, ballList[i].y)
+        let opacity = 1 - distance / opts.linkDistance
+        if (opacity > 0) {
+          drawArea.lineWidth = 0.5
+          drawArea.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`
+          drawArea.beginPath()
+          drawArea.moveTo(ball.x, ball.y)
+          drawArea.lineTo(ballList[i].x, ballList[i].y)
+          drawArea.closePath()
+          drawArea.stroke()
+        }
+      }
+    }
+    function deBouncer () {
+      clearTimeout(tid)
+      tid = setTimeout(function () {
+        resizeReset()
+      }, delay)
+    }
+    function setup () {
+      resizeReset()
+      for (let i = 0, l = opts.ballCount; i < l; i++) {
+        ballList.push(new Ball())
+      }
+      window.requestAnimationFrame(loop)
+    }
+    function loop () {
+      window.requestAnimationFrame(loop)
+      drawArea.clearRect(0, 0, w, h)
+      for (let i = 0, l = ballList.length; i < l; i++) {
+        ballList[i].move()
+        ballList[i].draw()
+      }
+      for (let i = 0, l = ballList.length; i < l; i++) {
+        linkPoints(ballList[i], ballList)
+      }
+    }
+    class Ball {
+      constructor () {
+        this.x = Math.random() * w
+        this.y = Math.random() * h
+        this.speed = opts.defaultSpeed + Math.random() * opts.variantSpeed
+        this.angle = Math.floor(Math.random() * 360)
+        this.color = opts.ballColor
+        this.radius = opts.defaultRadius + Math.random() * opts.variantRadius
+        this.vector = {
+          x: Math.cos(this.angle) * this.speed,
+          y: Math.sin(this.angle) * this.speed
+        }
+      }
+      hitCheck () {
+        if (this.x >= w || this.x <= 0) {
+          this.vector.x *= -1
+        }
+        if (this.y >= h || this.y <= 0) {
+          this.vector.y *= -1
+        }
+        if (this.x > w) this.x = w
+        if (this.x < 0) this.x = 0
+        if (this.y > h) this.y = h
+        if (this.y < 0) this.y = 0
+      }
+      move () {
+        this.hitCheck()
+        this.x += this.vector.x
+        this.y += this.vector.y
+      }
+      draw () {
+        drawArea.beginPath()
+        drawArea.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        drawArea.closePath()
+        drawArea.strokeStyle = this.color
+        drawArea.stroke()
+      }
+    }
+    window.addEventListener('resize', function () {
+      deBouncer()
+    })
+    resizeReset()
+    setup()
   }
+}
 </script>
 
 <style >

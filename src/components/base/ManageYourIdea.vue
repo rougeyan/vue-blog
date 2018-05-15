@@ -32,7 +32,7 @@
         multiple>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+        <div class="el-upload__tip" slot="tip">只能上传图片文件，且不超过4MB</div>
       </el-upload>
       <el-input placeholder="文件路径" v-model="imgpath" id="target">
         <el-button slot="append" @click="copy" data-clipboard-target="#target" class="btn">复制</el-button>
@@ -43,28 +43,28 @@
 
 <script type="text/ecmascript-6">
 import ClipboardJS from 'clipboard'
-import {mapActions,mapGetters} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import {formatDate} from '../../lib/lib'
 import api from '../../service/apiManage'
 import debounce from 'lodash/debounce'
 
 export default{
-  props:['blogDate','users'],
-  data(){
-    return{
-      rules:{
-        blogTitle:[{ required: true, message: '请输入文章标题', trigger: 'blur' },
+  props: ['blogDate', 'users'],
+  data () {
+    return {
+      rules: {
+        blogTitle: [{ required: true, message: '请输入文章标题', trigger: 'blur' },
           { min: 4, max: 30, message: '长度在 6 到 30 个字符', trigger: 'blur' }]
       },
-      idea:{
-        blogTitle:'',
-        blogDate:'',
-        blogContent:'',
-        blogType:'public'
+      idea: {
+        blogTitle: '',
+        blogDate: '',
+        blogContent: '',
+        blogType: 'public'
       },
-      dialogVisble:false,
-      imgpath:'',
-      fileList:[]
+      dialogVisble: false,
+      imgpath: '',
+      fileList: []
     }
   },
   computed: {
@@ -79,82 +79,82 @@ export default{
   methods: {
     ...mapActions([
       'createNewIdea',
-      'updateIdea',
+      'updateIdea'
     ]),
-    //赋值功能
-    copy(){
+    // 赋值功能
+    copy () {
       let that = this
-      const clipboard = new ClipboardJS('.btn');
-      clipboard.on('success', function(e) {
+      const clipboard = new ClipboardJS('.btn')
+      clipboard.on('success', function (e) {
         that.$message.success('已复制到粘贴板')
-        e.clearSelection();
-      });
+        e.clearSelection()
+      })
     },
-    //文件上传
-    upload(){
+    // 文件上传
+    upload () {
       let formData = new FormData()
-      formData.append('file',this.file)
-      api.upload(formData,{
-        headers:{
-          'Content-Type':'multipart/form-data',
-          'Authorization':this.token,
-          'userName':this.users.userName
+      formData.append('file', this.file)
+      api.upload(formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': this.token,
+          'userName': this.users.userName
         }
-      }).then(res=>{
-        if(res.res){
+      }).then(res => {
+        if (res.res) {
           this.imgpath = res.res
         }
       })
     },
-    closeDialog(){
+    closeDialog () {
       this.dialogVisble = false
       this.fileList = []
       this.imgpath = ''
     },
-    openDialog(){
+    openDialog () {
       this.dialogVisble = true
     },
-    beforeAvatarUpload(file) {
-      const isImage = file.type.includes('image');
-      const isLt4M = file.size / 1024 / 1024 < 4;
+    beforeAvatarUpload (file) {
+      const isImage = file.type.includes('image')
+      const isLt4M = file.size / 1024 / 1024 < 4
       if (!isImage) {
-        this.$message.error('只能上传图片');
+        this.$message.error('只能上传图片')
         return false
       }
       if (!isLt4M) {
-        this.$message.error('上传图片大小不能超过 4MB!');
+        this.$message.error('上传图片大小不能超过 4MB!')
         return false
       }
       this.file = file
       return true
     },
-    update:debounce(function (e) {
+    update: debounce(function (e) {
       let key = this.blogDate ? `article${this.blogDate}` : 'manuscript'
-      localStorage.setItem(key,JSON.stringify(this.idea))
+      localStorage.setItem(key, JSON.stringify(this.idea))
       this.idea.blogContent = e.target.value
     }, 300),
-    _send(){
-      async function a(){
-        if(this.blogDate){
-          await this.updateIdea(Object.assign(this.idea,{blogDate:this.blogDate},{userName:this.users.userName}))
-        }else{
-          await this.createNewIdea(Object.assign({userName:this.users.userName},this.idea))
+    _send () {
+      async function a () {
+        if (this.blogDate) {
+          await this.updateIdea(Object.assign(this.idea, {blogDate: this.blogDate}, {userName: this.users.userName}))
+        } else {
+          await this.createNewIdea(Object.assign({userName: this.users.userName}, this.idea))
         }
         this.clearForm()
       }
       a.bind(this)()
     },
-    clearForm(){
-      this.idea.blogTitle=''
-      this.idea.blogContent=''
-      this.idea.blogType='public'
+    clearForm () {
+      this.idea.blogTitle = ''
+      this.idea.blogContent = ''
+      this.idea.blogType = 'public'
     },
-    sendIdea(){
-      this.$refs['form'].validate((valid)=>{
-        if(valid){
-          if(this.idea.blogContent===''){
+    sendIdea () {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.idea.blogContent === '') {
             this.$message.error('文章内容不能为空')
-          }else{
+          } else {
             this.idea.blogDate = formatDate()
             this._send()
           }
@@ -163,24 +163,24 @@ export default{
     }
   },
   beforeRouteEnter (to, from, next) {
-    let key = to.query.blogDate ?  `article${to.query.blogDate}` : 'manuscript'
-    //如果是修改文章
-    if(to.query.blogDate){
+    let key = to.query.blogDate ? `article${to.query.blogDate}` : 'manuscript'
+    // 如果是修改文章
+    if (to.query.blogDate) {
       next(vm => {
-        vm.idea = vm.blogList.filter(item=>item.blogDate===to.query.blogDate)[0]
+        vm.idea = vm.blogList.filter(item => item.blogDate === to.query.blogDate)[0]
       })
     }
-    //如果浏览器缓存中存在该文章的缓存,则读取它
-    if(localStorage.getItem(key)){
-      next(vm=>{
+    // 如果浏览器缓存中存在该文章的缓存,则读取它
+    if (localStorage.getItem(key)) {
+      next(vm => {
         vm.idea = JSON.parse(localStorage.getItem(key))
         vm.$notify({
           title: '提示',
           message: '已采用缓存中的内容',
           duration: 2000
-        });
+        })
       })
-    }else{
+    } else {
       next()
     }
   }
