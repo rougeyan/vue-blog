@@ -72,7 +72,6 @@ class BaseModule{
         })
       }
     }, error =>{
-      console.log(error)
       if(error.isCustom){
         Message({
           message:error.msg,

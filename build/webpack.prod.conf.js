@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
 const env = require('../config/prod.env')
 
@@ -21,10 +22,10 @@ const webpackConfig = merge(baseWebpackConfig, {
       usePostCSS: true
     })
   },
-  externals:{
+/*  externals:{
     'vue':'Vue',
     'element-ui':'ELEMENT'
-  },
+  },*/
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
@@ -120,7 +121,19 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    // service worker caching
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'Calabash-Blog',
+      filename: 'service-worker.js',
+      staticFileGlobs: [
+        'dist/static/js/manifest.**.*',
+        'dist/static/js/vendor.**.*',
+        'dist/static/js/app.**.*'
+      ],
+      minify:true,
+      stripPrefix:'dist/'
+    })
   ]
 })
 

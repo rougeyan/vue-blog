@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 let userSchema = new mongoose.Schema({
-  "userId":String,
   "userName":String,
   "userPwd":String,
   "avatar":String,
@@ -15,12 +14,14 @@ let userSchema = new mongoose.Schema({
     "blogDate":String
   }],
   "blogList":[{
-    "blogId":String,
     "blogTitle":String,
     "blogDate":String,
     "blogContent":String,
     "blogType":String,
-    "likeCount":Number,
+    "likeCount":{
+      type:Number,
+      default:0
+    },
     "comment":[{
       "user":String,
       "date":String,
