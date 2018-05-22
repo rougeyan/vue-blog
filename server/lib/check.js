@@ -2,7 +2,7 @@ const fs = require('fs')
 const request = require('superagent')
 const path = require('path')
 const {exec} = require('child_process')
-const filepath = './blog.conf'
+const filepath = '/alidata/server/nginx-1.4.4/conf/vhosts/blog.conf'
 const filename = path.relative(__dirname,filepath)
 const baseUrl = 'https://blog.calabash.top'
 const fileRegex = /\/static\/(css|js)\/.*?\.(js|css)/g
@@ -37,7 +37,6 @@ async function init(){
   })
 }
 
-init()
 module.exports.updateNginxConf = init
 
 module.exports.validateLength = function (value='',min=4,max=16){

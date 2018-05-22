@@ -83,6 +83,9 @@ class apiManage extends BaseModule {
   setAvatar(obj,config){
     return this.post('avatar',obj,config)
   }
+  subscription(obj){
+    return this.post('subscription',obj)
+  }
 }
 
 

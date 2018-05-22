@@ -5,7 +5,7 @@ const mongoose = require('../mongodb/index')
 const token = require('../lib/token')
 const users = require('../model/users')
 const check = require('../lib/check')
-
+const pushMessage = require('../webpush/index')
 const response = function(errno=0,res='',msg='',token=''){
   return token ?
     {
@@ -99,6 +99,8 @@ router.use(async function(req,res,next){
     '/login',
     '/files',
     '/pv',
+    '/subscription',
+    '/push'
   ]
   if(!noValidUser.includes(req.path)){
     let userName = req.body.userName || req.query.userName || req.headers['username']
@@ -189,6 +191,13 @@ router.post('/ideas',async function(req,res){
   })
   let data = await req._user.save()
   if(data){
+    if(req._user.userName==='Calabash' || 'Maxeano' || 'maxeano'){
+      await sendNotification({
+        title:'新消息',
+        body:`${req._user.userName}发布了新的文章 ${req.body.blogTitle}`,
+        icon:'/calabash24.png'
+      })
+    }
     return res.json(response(0,'','发布成功'))
   }else{
     return res.json(response(1,'','发布失败'))
@@ -370,5 +379,28 @@ router.post('/like',async function(req,res){
   }
 })
 
+
+//web push
+router.post('/subscription',async function(req,res){
+  const value = req.body.data
+  console.log(value)
+  token.saveSubscription('subscription',value)
+  return res.json(response(0,'',''))
+})
+router.post('/push',async function(req,res){
+  let data = req.body
+  await sendNotification(data)
+  return res.json(response(0,'',''))
+})
+
+async function sendNotification(data){
+  let list = await token.getSubscription('subscription')
+  for(let n of list){
+    let res = await pushMessage(n,JSON.stringify(data))
+    if(typeof res === 'string'){
+      token.removeSubscription(res)
+    }
+  }
+}
 
 module.exports = router;

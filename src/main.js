@@ -5,6 +5,9 @@ import router from './router'
 import ELEMENT from 'element-ui'
 import store from './store'
 import 'element-ui/lib/theme-chalk/index.css'
+import './registerServiceWorker'
+
+
 Vue.config.productionTip = false
 
 Vue.use(infiniteScroll)

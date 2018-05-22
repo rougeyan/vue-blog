@@ -129,10 +129,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       staticFileGlobs: [
         'dist/static/js/manifest.**.*',
         'dist/static/js/vendor.**.*',
-        'dist/static/js/app.**.*'
+        'dist/static/js/app.**.*',
+        'dist/static/js/marked.min.js',
+        'dist/static/css/app.**.*',
+        'dist/static/css/github-markdown.min.css'
       ],
       minify:true,
-      stripPrefix:'dist/'
+      stripPrefix:'dist/',
+      importScripts:['/static/listenPush.js']
     })
   ]
 })

@@ -44,6 +44,15 @@ const token = {
   },
   getIpLog(data){
      return redis.lrange(data,0,-1)
+  },
+  saveSubscription(key,value) {
+    redis.sadd(key, value)
+  },
+  getSubscription(key){
+    return redis.smembers(key)
+  },
+  removeSubscription(value){
+    redis.srem('subscription',value)
   }
 }
 
