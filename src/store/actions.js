@@ -151,3 +151,16 @@ export const likethis = function({commit,state},data){
     }
   })
 }*/
+
+export const socket_sendMsg = function({commit,state},data){
+  commit(types.SOCKET_SEND_MSG,data)
+}
+//获取当前聊天对象的聊天记录
+export const getChatData = function({commit,state},data){
+  apiManage.getChatData(data).then(res=>{
+    if(res.errno===0){
+      commit(types.SET_CHAT_DATA,res.data)
+    }
+  })
+}
+

@@ -51,9 +51,9 @@ export function formatDateEng(value){
 }
 
 export function throttle(fn, delay) {
-  var now, lastExec, timer, context, args; //eslint-disable-line
+  let now, lastExec, timer, context, args; //eslint-disable-line
 
-  var execute = function () {
+  let execute = function () {
     fn.apply(context, args);
     lastExec = now;
   };
@@ -70,7 +70,7 @@ export function throttle(fn, delay) {
     }
 
     if (lastExec) {
-      var diff = delay - (now - lastExec);
+      let diff = delay - (now - lastExec);
       if (diff < 0) {
         execute();
       } else {
@@ -106,4 +106,8 @@ export async function pvData(arr){
     }
   }
   return res
+}
+
+export function timestampToTime(nS) {
+  return new Date(parseInt(nS)).toLocaleString('zh',{hour12:false})
 }

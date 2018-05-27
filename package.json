@@ -21,9 +21,11 @@
     "promise-polyfill": "^7.1.1",
     "qs": "^6.5.2",
     "register-service-worker": "^1.2.0",
+    "socket.io-client": "^2.1.1",
     "vue": "^2.5.2",
     "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^3.0.1",
+    "vue-socket.io": "^2.1.1-b",
     "vuex": "^3.0.1",
     "vuex-persistedstate": "^2.4.2"
   },

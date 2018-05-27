@@ -1,23 +1,16 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const upload = require('../multer/index')
 const mongoose = require('../mongodb/index')
 const token = require('../lib/token')
 const users = require('../model/users')
 const check = require('../lib/check')
 const pushMessage = require('../webpush/index')
+
 const response = function(errno=0,res='',msg='',token=''){
-  return token ?
-    {
-      errno,
-      res,
-      msg,
-      token
-    }:{
-      errno,
-      res,
-      msg,
-    }
+  return token
+    ? { errno, res, msg, token}
+    : { errno, res, msg,}
 }
 //分页
 const getPage = (pgN,pgS,arr)=>arr.slice((pgN-1)*pgS).slice(0,pgS)
@@ -93,6 +86,7 @@ router.use(async function(req, res, next) {
 //中间件:不包含在数组中的路径需要先验证是否存在该用户,如果有将结果挂载到req._user下
 router.use(async function(req,res,next){
   const noValidUser = [
+    '/api',
     '/checkStatus',
     '/logout',
     '/register',
@@ -100,7 +94,7 @@ router.use(async function(req,res,next){
     '/files',
     '/pv',
     '/subscription',
-    '/push'
+    '/push',
   ]
   if(!noValidUser.includes(req.path)){
     let userName = req.body.userName || req.query.userName || req.headers['username']
@@ -403,4 +397,9 @@ async function sendNotification(data){
   }
 }
 
-module.exports = router;
+
+
+module.exports = {
+  users:router,
+  getUserProp
+};

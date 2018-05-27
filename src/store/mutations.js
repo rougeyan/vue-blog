@@ -85,6 +85,21 @@ const mutations = {
   },
   [types.SET_COMMENT_LIST](state,data){
     state.currentBlog.comment = data
+  },
+  [types.SOCKET_CONNECT](state,data){
+    state.connect = true
+  },
+  [types.SOCKET_SEND_MSG](state,data){
+    state.message.push(data)
+  },
+  [types.SET_CHAT_DATA](state,data){
+    state.message = data
+  },
+  //后台受到信息
+  [types.SOCKET_RECVMSG](state,data){
+    if(data[0].from!==state.users.userName){
+      state.message.push(data[0])
+    }
   }
 }
 export default  mutations

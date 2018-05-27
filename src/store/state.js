@@ -12,7 +12,10 @@ const initState = {
   //重定向的路径,目前用于登录后控制路由跳转到管理页
   redirectTo:'',
   //弹窗控制
-  openLoginDialog:false
+  openLoginDialog:false,
+  //聊天
+  connect:false,
+  message:[]
 };
 
 const state = {

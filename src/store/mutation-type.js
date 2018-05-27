@@ -36,3 +36,12 @@ export const SET_LIKELIST = 'SET_LIKELIST';
 export const SET_AVATAR = 'SET_AVATAR';
 
 export const SET_COMMENT_LIST = 'SET_COMMENT_LIST'
+
+//
+export const SOCKET_CONNECT = 'SOCKET_CONNECT'
+
+export const SOCKET_SEND_MSG = 'SOCKET_SEND_MSG'
+
+export const SET_CHAT_DATA = 'SET_CHAT_DATA'
+
+export const SOCKET_RECVMSG = 'SOCKET_RECVMSG'

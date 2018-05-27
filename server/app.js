@@ -4,7 +4,8 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const users = require('./routes/users');
+const {users} = require('./routes/users');
+const chats = require('./routes/chats');
 const app = express();
 
 // view engine setup
@@ -20,8 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*app.use(expressJwt({secret:'secret'}).unless({path:['/api/createUser','/api/createUser']}))*/
-app.use('/api', users);
-
+app.use('/api/v2',chats)
+app.use('/api/v1', users);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   const err = new Error('Not Found');
@@ -39,5 +40,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.io = chats.io
 
 module.exports = app;
