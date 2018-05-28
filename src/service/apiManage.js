@@ -37,19 +37,19 @@ class apiManage extends BaseModule {
   //删除博客
   deleteIdea(obj){
     let {blogDate,...data} = obj
-    let url = `ideas/${blogDate}`
+    let url = `v1/ideas/${blogDate}`
     return this.delete(url,{data:data})
   }
   //修改博文
   changeIdea(obj){
     let {blogDate,...data} = obj
-    let url = `ideas/${blogDate}`
+    let url = `v1/ideas/${blogDate}`
     return this.put(url,data)
   }
   //获取某一个文章
   getIdea(obj){
     let {blogDate,...data} = obj
-    let url = `ideas/${blogDate}`
+    let url = `v1/ideas/${blogDate}`
     return this.get(url,data)
   }
   //获取博文列表
@@ -94,6 +94,9 @@ class apiManage extends BaseModule {
   }
   addChatObj(obj){
     return this.post('v2/chatList',obj)
+  }
+  uploadChatPic(obj,config){
+    return this.post('v2/chatPic',obj,config)
   }
 }
 export default new apiManage()

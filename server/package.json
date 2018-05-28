@@ -23,6 +23,7 @@
     "socket.io": "^2.1.1",
     "spdy": "^3.4.7",
     "superagent": "^3.8.3",
+    "underscore": "^1.9.0",
     "web-push": "^3.3.1"
   }
 }

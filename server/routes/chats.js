@@ -1,7 +1,9 @@
 const express = require('express')
+const _ = require('underscore')
 const router = express.Router()
 const chats = require('../model/chats')
 const {getUserProp} = require('./users')
+const upload = require('../multer/index')
 
 function rsp(errno=0,data='',msg=''){
   return {errno,data,msg}
@@ -33,13 +35,14 @@ router.get('/chatList',async function(req,res){
   let doc = await chats.find({},{_id:0,chatid:1})
   if(doc){
     let list = doc.reduce((acc,item,index)=>{
-      if(!acc.includes(item.chatid)){
+      if(item.chatid.includes(user)){
         acc.push(item.chatid)
       }
       return acc
     },[])
     let data = []
-    for(let n of list){
+    let arr = [...new Set(list)]
+    for(let n of arr){
       let [from,to] = n.split('_')
       let obj = from === user ? to : from
       let avatar = await getUserProp(obj,'avatar')
@@ -51,29 +54,37 @@ router.get('/chatList',async function(req,res){
     return res.json(rsp(0,data,''))
   }
 })
-//获取与某一个人的聊天数据
+//获取与某一个人的聊天数据(最近五十条)
 router.get('/chatData',function(req,res){
   const chatid = req.query.chatid
   chats.find({chatid},{_id:0,__v:0},function(err,doc){
-    return res.json(rsp(0,doc,''))
+    return res.json(rsp(0,doc.slice(-50),''))
   })
 })
-
-
-
+//聊天图片上传
+router.post('/chatPic',upload.single('chat'),async function(req,res){
+  let path = `https://blog.calabash.top/${req.file.filename}`
+  return res.json(rsp(0,path,''))
+})
 router.io = function (io) {
-  io.on('connection', function (socket) {
+  io.on('connection', function (socket,data) {
     console.log('connected');
+
+    socket.on('online',function(data){
+      socket.name = data
+    })
+
     socket.on('sendMsg',function(data){
       const {from,to,content} = data
       const chatid = [from,to].sort().join('_')
       const timeStamp = new Date().getTime()
-      console.log(data)
       chats.create({chatid,...data,timeStamp},function(err,doc){
         if(!err){
           let {_id,__v,...data} = doc._doc
-          console.log(data)
-          io.emit('recvMsg',data)
+          let toObj = _.findWhere(io.sockets.sockets,{name:to})
+          if(toObj){
+            toObj.emit('recvMsg',data)
+          }
         }
       })
     })
@@ -81,4 +92,6 @@ router.io = function (io) {
 
   return io;
 }
+
+
 module.exports = router;

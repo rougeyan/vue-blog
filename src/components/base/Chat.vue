@@ -5,7 +5,7 @@
       <div class="msg-list my-scrollbar">
         <span v-for="(item,index) in chatlist"
              :key="index">
-          <img :src="item.avatar"
+          <img :src="item.avatar?item.avatar:'/calabash32.png'"
             alt=""
             class="avatar"
             @click="_getChatData(item)"
@@ -27,22 +27,47 @@
       <div class="fl-column msg-body">
         <!--聊天内容区域-->
         <div class="msg-data fl-column my-scrollbar" id="chat-content">
-          <div v-for="(item,index) in message" :key="index" class="msg-section">
+          <div v-for="(item,index) in message_filter" :key="index" class="msg-section">
             <div class="time-container">
-              <span class="time" v-if="index%10===0">{{getTime(item.timeStamp)}}</span>
+              <span class="time" v-show="index%10===0">{{getTime(item.timeStamp)}}</span>
             </div>
             <div v-if="item.from ===userName" class="fl-row right" >
-              <span class="msg-text">{{item.content}}</span>
+              <span class="msg-text" v-html="item.content"></span>
               <img :src="avatar" alt="" class="msg-avatar">
             </div>
-            <div v-else class="fl-row left">
+            <div v-if="item.from === friend && item.to===userName" class="fl-row left">
               <img :src="friendsAvatar" alt="" class="msg-avatar">
-              <span class="msg-text">{{item.content}}</span>
+              <span class="msg-text" v-html="item.content"></span>
             </div>
           </div>
         </div>
+
         <!--工具栏-->
-        <div class="toolbar"></div>
+        <div class="toolbar">
+          <!--popover-->
+          <el-popover
+            class="emoji-popover"
+            placement="top"
+            :width="emojiBoxWidth"
+            v-model="openEmoji">
+           <div class="fl-row emojiBox">
+             <i v-for="i in peopleEmoji" @click="addToMsg(i)">{{i}}</i>
+           </div>
+          </el-popover>
+          <!--表情-->
+          <img src="../../assets/smile16.svg" alt="" class="emoji" @click="openEmoji = !openEmoji">
+          <!--用于上传的隐藏组件-->
+          <el-upload
+            id="upload"
+            style="display: none"
+            action="/files"
+            ref="upload"
+            :httpRequest="upload"
+            :before-upload="beforeAvatarUpload">
+          </el-upload>
+          <!--发送图片-->
+          <img src="../../assets/picture.svg" alt="" class="pic_btn" @click="uploadProxy">
+        </div>
         <!--输入区域-->
         <div class="msg-editor fl-column">
           <textarea name="" id="" v-model="msg" @keyup.enter="send"></textarea>
@@ -61,6 +86,7 @@
   import {mapGetters,mapActions} from 'vuex'
   import apiManage from "../../service/apiManage"
   import {timestampToTime} from '../../lib/lib'
+
   export default {
     name: "Chat",
     data(){
@@ -70,39 +96,63 @@
         friend:'',
         msg:'',
         visible:false,
-        input1:''
+        openEmoji:false,
+        input1:'',
+        peopleEmoji : '😄 😃 😀 😊 ☺ 😉 😍 😘 😚 😗 😙 😜 😝 😛 😳 😁 😔 😌 😒 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠 😡 😤 😖 😆 😋 😷 😎 😴 😵 😲 😟 😦 😧 😈 👿 😮 😬 😐 😕 😯 😶 😇 😏 😑 👲 👳 👮 👷 💂 👶 👦 👧 👨 👩 👴 👵 👱 👼 👸 😺 😸 😻 😽 😼 🙀 😿 😹 😾 👹 👺 🙈 🙉 🙊 💀 👽 💩 🔥 ✨ 🌟 💫 💥 💢 💦 💧 💤 💨 👂 👀 👃 👅 👄 👍 👎 👌 👊 ✊ ✌ 👋 ✋ 👐 👆 👇 👉 👈 🙌 🙏 ☝ 👏 💪 🚶 🏃 💃 👫 👪 👬 👭 💏 💑 👯 🙆 🙅 💁 🙋 💆 💇 💅 👰 🙎 🙍 🙇 🎩 👑 👒 👟 👞 👡 👠 👢 👕 👔 👚 👗 🎽 👖 👘 👙 💼 👜 👝 👛 👓 🎀 🌂 💄 💛 💙 💜 💚 ❤ 💔 💗 💓 💕 💖 💞 💘'.split(' '),
+        emojiBoxWidth:window.innerWidth<767? 200:400,
+        file:''
       }
     },
     computed:{
       ...mapGetters([
         'userName',
         'message',
-        'avatar'
+        'avatar',
+        'token'
       ]),
+      message_filter(){
+        return this.message.filter((item)=>{
+          return item.chatid === [this.userName,this.friend].sort().join('_')
+        })
+      }
     },
     sockets:{
       connect: function(){
         console.log('socket connected')
       },
       recvMsg(val){
+      }
+    },
+    watch:{
+      'message'(){
         this.$nextTick(()=>{
-          console.log('下滑啊')
           let el = document.getElementById('chat-content')
-          console.log(el.scrollTop)
-          console.log(el.scrollHeight)
-          console.log(el.clientHeight)
           el.scrollTop = el.scrollHeight
         })
       }
     },
     mounted(){
-      this.$socket.emit('connect'); //在这里触发connect事件
+      this.$socket.emit('connect','test参数'); //在这里触发connect事件
+      this.$socket.emit('online',this.userName)
     },
     methods:{
       ...mapActions([
         'socket_sendMsg',
         'getChatData'
       ]),
+      emitMsg(content){
+        this.$socket.emit('sendMsg',{
+          from:this.userName,
+          to:this.friend,
+          content:content
+        })
+        this.socket_sendMsg({
+          from:this.userName,
+          to:this.friend,
+          content:content,
+          chatid:[this.friend,this.userName].sort().join('_')
+        })
+      },
       send(){
         if(this.msg===''){
           this.$message.error('不能发送空消息')
@@ -112,22 +162,13 @@
           this.$message.error('没有确定聊天对象')
           return
         }
-        this.$socket.emit('sendMsg',{
-          from:this.userName,
-          to:this.friend,
-          content:this.msg
-        })
-        this.socket_sendMsg({
-          from:this.userName,
-          to:this.friend,
-          content:this.msg
-        })
+        this.emitMsg(this.msg)
         this.msg = ''
       },
       _getChatData(item){
         let chatid = [item.to,this.userName].sort().join('_')
         this.getChatData({chatid})
-        this.friendsAvatar = item.avatar
+        this.friendsAvatar = item.avatar ? item.avatar : '/calabash32.png'
         this.friend = item.to
       },
       addChat(){
@@ -142,13 +183,54 @@
         })
       },
       getTime(timeStamp){
-        let [date,time] = timestampToTime(timeStamp).split(' ')
-        let today = new Date().toLocaleString('zh').split(' ')[0]
-        if(today === date){
-          return time
+        if(/\d+/.test(timeStamp)){
+          let [date,time] = timestampToTime(timeStamp).split(' ')
+          let today = new Date().toLocaleString('zh').split(' ')[0]
+          if(today === date){
+            return time
+          }
+          return `${date} ${time}`
         }
-        return `${date} ${time}`
-      }
+        return ''
+      },
+      addToMsg(i){
+        this.msg += i
+        this.openEmoji = false
+      },
+      uploadProxy(){
+        document.getElementById('upload').getElementsByTagName('input')[0].click()
+      },
+      upload () {
+        let formData = new FormData()
+        formData.append('chat', this.file)
+        apiManage.uploadChatPic(formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': this.token,
+            'userName': this.userName
+          }
+        }).then(res => {
+          if (res.data) {
+            let content = `<img src="${res.data}" style="width:100%;height:100%" />`
+            this.emitMsg(content)
+          }
+          this.file = ''
+        })
+      },
+      beforeAvatarUpload (file) {
+        const isImage = file.type.includes('image')
+        const isLt4M = file.size / 1024 / 1024 < 4
+        if (!isImage) {
+          this.$message.error('只能上传图片')
+          return false
+        }
+        if (!isLt4M) {
+          this.$message.error('上传图片大小不能超过 4MB!')
+          return false
+        }
+        this.file = file
+        return true
+      },
     },
     created(){
       apiManage.getChatList({user:this.userName}).then(res=>{
@@ -204,6 +286,15 @@
   .toolbar{
     flex:1;
     border-top:1px solid rgba(0,0,0,.2);
+    display: flex;
+    position: relative;
+    margin: 0 10px;
+    align-items: center;
+  }
+  .emoji-popover{
+    position: absolute;
+    left:0;
+    top:-212px;
   }
   .msg-editor{
     flex: 3;
@@ -262,6 +353,7 @@
     justify-content: flex-start;
   }
   .msg-text{
+    display: flex;
     position:relative;
     padding: 5px 10px;
     border-radius: 8px;
@@ -269,6 +361,10 @@
     line-height: 32px;
     max-width: 50%;
     word-break: break-all;
+  }
+  .mgs-text > img{
+    max-width: 100%;
+    max-height: 100%;
   }
   .right .msg-text{
     background-color: rgb(38,141,245);
@@ -311,6 +407,25 @@
     border-radius: 5px;
     background: rgb(204,204,204);
   }
+  .emoji{
+    width: 24px;
+    height: 24px;
+    margin: 0 5px;
+  }
+  .emojiBox{
+    flex-wrap: wrap;
+    word-break: break-all;
+  }
+  .emojiBox > i{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  .pic_btn{
+    width: 22px;
+    height: 22px;
+    margin: 0 5px;
+  }
   @media (max-width: 767px) {
     .tim{
       flex-direction: column;
@@ -333,6 +448,10 @@
     }
     .send_btn{
       margin:0 20px 20px 0;
+    }
+    .emoji-popover{
+      width: 240px;
+      top:-400px
     }
   }
 </style>

@@ -106,14 +106,6 @@ export default{
         }
       })
     },
-    closeDialog () {
-      this.dialogVisble = false
-      this.fileList = []
-      this.imgpath = ''
-    },
-    openDialog () {
-      this.dialogVisble = true
-    },
     beforeAvatarUpload (file) {
       const isImage = file.type.includes('image')
       const isLt4M = file.size / 1024 / 1024 < 4
@@ -127,6 +119,14 @@ export default{
       }
       this.file = file
       return true
+    },
+    closeDialog () {
+      this.dialogVisble = false
+      this.fileList = []
+      this.imgpath = ''
+    },
+    openDialog () {
+      this.dialogVisble = true
     },
     update: debounce(function (e) {
       let key = this.blogDate ? `article${this.blogDate}` : 'manuscript'
