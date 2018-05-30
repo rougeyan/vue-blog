@@ -66,6 +66,11 @@ router.post('/chatPic',upload.single('chat'),async function(req,res){
   let path = `https://blog.calabash.top/${req.file.filename}`
   return res.json(rsp(0,path,''))
 })
+//聊天语音上传
+router.post('/chatVoice',upload.single('audio'),async function(req,res){
+  let path = `https://blog.calabash.top/${req.file.filename}`
+  return res.json(rsp(0,path,''))
+})
 router.io = function (io) {
   io.on('connection', function (socket,data) {
     console.log('connected');
@@ -77,8 +82,7 @@ router.io = function (io) {
     socket.on('sendMsg',function(data){
       const {from,to,content} = data
       const chatid = [from,to].sort().join('_')
-      const timeStamp = new Date().getTime()
-      chats.create({chatid,...data,timeStamp},function(err,doc){
+      chats.create({chatid,...data},function(err,doc){
         if(!err){
           let {_id,__v,...data} = doc._doc
           let toObj = _.findWhere(io.sockets.sockets,{name:to})

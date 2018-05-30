@@ -33,6 +33,7 @@ async function getUserProp(user,key){
 
 //记录IP
 router.use(function(req,res,next){
+
   let ip = req.headers['x-forwarded-for'] || // 判断是否有反向代理 IP
     req.connection.remoteAddress || // 判断 connection 的远程 IP
     req.socket.remoteAddress || // 判断后端的 socket 的 IP
@@ -46,10 +47,12 @@ router.use(function(req,res,next){
   if(!noValidPath.includes(req.path) && ip.length){
     token.ipLog(ip,req.url)
   }
+
   next()
 })
 //中间件:包含在validToken数组中的路径需要先验证token是否正确
 router.use(async function(req, res, next) {
+
   const validToken = [
     'PUT/userinfo', //修改用户信息
     'POST/ideas',   //新增博文
@@ -72,14 +75,17 @@ router.use(async function(req, res, next) {
     if(req.path==='/comment' || req.path==='/like'){
       userName = req.body.user
     }
-    console.log(userName,tok)
+
     let data = await token._check(userName,tok)
     if(data){
+
       next()
     }else{
+
       return res.json(response(1,'','凭证失效,请重新登录'))
     }
   }else{
+
     next()
   }
 })
@@ -101,6 +107,7 @@ router.use(async function(req,res,next){
     let user = await users.findOne({'userName':userName})
     if(user){
       req._user = user
+      req._userObj = user.toObject()
       next()
     }else{
       return res.json(response(1,'','没有该用户'))
@@ -113,21 +120,20 @@ router.use(async function(req,res,next){
 router.get('/',function(req,res){
 	res.send('QAQ')
 })
+
+
+
 //注册功能
 router.post('/register',async function(req, res) {
   let {userName,userPwd}= req.body
-  if(check.validateLength(userName) && check.validateLength(userPwd)){
-    let user = await users.findOne({'userName':userName})
-    if(user){
-      return res.json(response(1,'','该昵称已被占用'))
-    }else{
-      let createUser = await users.create(req.body)
-      return createUser
-        ? res.json(response(0,'','注册成功'))
-        : res.json(response(1,'','注册失败'))
-    }
+  let user = await users.findOne({'userName':userName})
+  if(user){
+    return res.json(response(1,'','该昵称已被占用'))
   }else{
-    return res.json(response(1,'','数据非法'))
+    let createUser = await users.create(req.body)
+    return createUser
+      ? res.json(response(0,'','注册成功'))
+      : res.json(response(1,'','注册失败'))
   }
 });
 //登录功能
@@ -199,13 +205,8 @@ router.post('/ideas',async function(req,res){
 })
 //删除某一篇文章
 router.delete('/ideas/:blogDate',async function(req,res){
-  let index
-  req._user.blogList.forEach((item,i)=>{
-    if(item.blogDate===req.params.blogDate){
-      index = i
-    }
-  })
-  if(index!==undefined){
+  let index = req._user.blogList.findIndex((item,i)=>item.blogDate===req.params.blogDate)
+  if(index!==-1){
     req._user.blogList.splice(index,1)
     await req._user.save()
     await token._delete(req.params.blogDate)
@@ -232,45 +233,53 @@ router.put('/ideas/:blogDate',async function(req,res){
 //获取某一篇文章
 router.get('/ideas/:blogDate',async function(req,res){
   let blogDate = req.params.blogDate
-  let list = req._user.blogList,
-      obj = {}
-  list.forEach(function(item,index){
-    if(item.blogDate===blogDate){
-      obj = Object.assign(item.toObject(),{
-        lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
-        nextBlogDate:list[index+1]?list[index+1].blogDate:'0'})
-    }
-  })
+  let list = req._userObj.blogList
+  let index = list.findIndex((item,index)=>item.blogDate===blogDate)
+  let {_id,blogType,...filterObj} = Object.assign(list[index],{
+    lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
+    nextBlogDate:list[index+1]?list[index+1].blogDate:'0'})
+
   //解决同一页面刷新重复计数的问题,但是如果两个文章间切换还是存在问题
   if(req.cookies.Cal === undefined || req.cookies.Cal !== blogDate){
-    obj.count = await token._incr(blogDate) || ''
+    filterObj.count = await token._incr(blogDate) || ''
     res.cookie('Cal',blogDate,{maxAge:1000*60*10,secure:true,path:'/api/ideas'})
   }else{
-    obj.count = await token._getValue(blogDate)
+    filterObj.count = await token._getValue(blogDate)
   }
   let data = []
-  for(let item of obj.comment){
+  for(let item of filterObj.comment){
     let avatar = await getUserProp(item.user,'avatar');
     data.push({...item,avatar})
   }
-  obj.comment = data
-  return obj.blogDate
-    ? res.json(response(0,obj,''))
+  filterObj.comment = data
+  return filterObj.blogDate
+    ? res.json(response(0,filterObj,''))
     : res.json(response(1,'','文章不存在'))
 })
 //获取文章列表
 router.get('/ideas',async function (req,res) {
-  let obj = req._user.blogList.toObject().map((item)=>filterProp(item))
-  if(req._user.blogList.toObject().length===0){
+  let obj = req._userObj.blogList.reverse()
+  if(obj.length===0){
     return res.json(response(1,'','该用户没有文章'))
   }
   if(req.query.type==='all'){
-    let data = req._user.blogList.reverse()
-    return res.json(response(0,getPage(req.query.pgN,req.query.pgS,data),''))
+    let data = getPage(req.query.pgN,req.query.pgS,obj)
+      .reduce((acc,item)=>{
+        let {_id,likeCount,comment,...data} = item
+        acc.push(data)
+        return acc
+      },[])
+    return res.json(response(0,data,''))
   }
   if(req.query.type==='public'){
-    let data = obj.filter((item)=>item.blogType==='public').reverse()
-    return res.json(response(0,getPage(req.query.pgN,req.query.pgS,data),''))
+    let data = obj.filter((item)=>item.blogType==='public')
+    let result = getPage(req.query.pgN,req.query.pgS,data)
+      .reduce((acc,item)=>{
+        let {_id,likeCount,comment,blogType,blogContent,...data} = item
+        acc.push(data)
+        return acc
+      },[])
+    return res.json(response(0,result,''))
   }
   return res.json(response(0,'',''))
 })
@@ -295,11 +304,8 @@ router.get('/pv',async function(req,res){
 //评论
 router.post('/comment',async function(req,res){
   let {blogDate,userName,...commentBody} = req.body
-  req._user.blogList.toObject().forEach((item,index)=>{
-    if(item.blogDate===blogDate){
-      req._user.blogList[index].comment.push(commentBody)
-    }
-  })
+  let index = req._user.blogList.findIndex((item,index)=>item.blogDate===blogDate)
+  req._user.blogList[index].comment.push(commentBody)
   let data = await req._user.save()
   if(data){
     return res.json(response(0,'','评论成功'))
@@ -309,7 +315,7 @@ router.post('/comment',async function(req,res){
 })
 //获取评论
 router.get('/comment',async function(req,res){
-  let blog = req._user.blogList.toObject().filter((item)=>item.blogDate===req.query.blogDate)[0]
+  let blog = req._user.blogList.find((item)=>item.blogDate===req.query.blogDate)
   let data = []
   for(let item of blog.comment){
     let avatar = await getUserProp(item.user,'avatar');
@@ -318,37 +324,27 @@ router.get('/comment',async function(req,res){
   return res.json(response(0,data,''))
 })
 //应该用redis俩搞,设计之初没有计划好,现在已经比较混乱了
+
 //喜欢/取消喜欢某文章
 router.post('/like',async function(req,res){
-  let {userName,user,blogDate,flag=false} = req.body
+  let {userName,user,blogDate} = req.body
+  let blogList = req._userObj.blogList
   let query = await users.findOne({'userName':user})
-  if(query){
-    let liked
-    query.likeList.forEach((item,index)=>{
-      if(item.blogDate===blogDate && item.author===userName){
-        liked = true
-      }
-    })
-    if(liked){
-      //flag为true则是取消喜欢
-      if(flag){
-        let count = ''
-        query.likeList = query.likeList.filter((item)=>item.author!==userName || item.blogDate!==blogDate)
-        await query.save()
-        req._user.blogList.toObject().forEach((item,index)=>{
-          if(item.blogDate===blogDate){
-            if(req._user.blogList[index].likeCount===undefined){
-              req._user.blogList[index].likeCount = 0
-            }
-            req._user.blogList[index].likeCount -=1
-            count = req._user.blogList[index].likeCount
-          }
-        })
-        await req._user.save()
-        return res.json(response(0,{likeList:query.likeList,count:count},'已经失去你的爱:('))
 
-      }
-      return res.json(response(0,'','只能喜欢一次哦:)'))
+  if(query){
+    let liked = query.likeList.findIndex((item,index)=>item.blogDate===blogDate && item.author===userName)
+    if(liked !== -1){
+      let count = ''
+      query.likeList = query.likeList.filter((item)=>item.author!==userName || item.blogDate!==blogDate)
+      await query.save()
+      blogList.forEach((item,index)=>{
+        if(item.blogDate===blogDate){
+          req._user.blogList[index].likeCount -=1
+          count = req._user.blogList[index].likeCount
+        }
+      })
+      await req._user.save()
+      return res.json(response(0,{likeList:query.likeList,count:count},'已经失去你的爱:('))
     }else{
       let count = ''
       query.likeList.push({
@@ -356,11 +352,8 @@ router.post('/like',async function(req,res){
         blogDate:blogDate
       })
       await query.save()
-      req._user.blogList.toObject().forEach((item,index)=>{
+      req._userObj.blogList.forEach((item,index)=>{
         if(item.blogDate===blogDate){
-          if(req._user.blogList[index].likeCount===undefined){
-            req._user.blogList[index].likeCount = 0
-          }
           req._user.blogList[index].likeCount +=1
           count = req._user.blogList[index].likeCount
         }
@@ -377,7 +370,6 @@ router.post('/like',async function(req,res){
 //web push
 router.post('/subscription',async function(req,res){
   const value = req.body.data
-  console.log(value)
   token.saveSubscription('subscription',value)
   return res.json(response(0,'',''))
 })

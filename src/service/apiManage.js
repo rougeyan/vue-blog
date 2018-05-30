@@ -65,7 +65,7 @@ class apiManage extends BaseModule {
   }
   //ip地址查询
   getIpAddress(obj){
-    return this.get('v1/https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json',obj)
+    return this.get('https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json',obj)
   }
   //发布评论
   postComment(obj){
@@ -97,6 +97,10 @@ class apiManage extends BaseModule {
   }
   uploadChatPic(obj,config){
     return this.post('v2/chatPic',obj,config)
+  }
+  //语音消息
+  uploadVoiceMsg(obj,config){
+    return this.post('v2/chatVoice',obj,config)
   }
 }
 export default new apiManage()

@@ -32,12 +32,12 @@
               <span class="time" v-show="index%10===0">{{getTime(item.timeStamp)}}</span>
             </div>
             <div v-if="item.from ===userName" class="fl-row right" >
-              <span class="msg-text" v-html="item.content"></span>
+              <span class="msg-text" v-html="getHtml(item.content,true)" @click="play(item.content)"></span>
               <img :src="avatar" alt="" class="msg-avatar">
             </div>
             <div v-if="item.from === friend && item.to===userName" class="fl-row left">
               <img :src="friendsAvatar" alt="" class="msg-avatar">
-              <span class="msg-text" v-html="item.content"></span>
+              <span class="msg-text" v-html="getHtml(item.content,false)" @click="play(item.content)"></span>
             </div>
           </div>
         </div>
@@ -67,6 +67,12 @@
           </el-upload>
           <!--发送图片-->
           <img src="../../assets/picture.svg" alt="" class="pic_btn" @click="uploadProxy">
+          <!--播放语音的代码哦-->
+          <audio controls="controls" id="audio" style="display: none" :autoplay="autoplay">
+            <source :src="src" type="audio/mp3">
+          </audio>
+          <!--发送语音-->
+          <img src="../../assets/voice.svg" alt="" class="pic_btn" @click="startRecordVoice">
         </div>
         <!--输入区域-->
         <div class="msg-editor fl-column">
@@ -86,6 +92,7 @@
   import {mapGetters,mapActions} from 'vuex'
   import apiManage from "../../service/apiManage"
   import {timestampToTime} from '../../lib/lib'
+  import {getRecordFile,startRecord,stopRecord} from '../../lib/record'
 
   export default {
     name: "Chat",
@@ -100,7 +107,11 @@
         input1:'',
         peopleEmoji : '😄 😃 😀 😊 ☺ 😉 😍 😘 😚 😗 😙 😜 😝 😛 😳 😁 😔 😌 😒 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠 😡 😤 😖 😆 😋 😷 😎 😴 😵 😲 😟 😦 😧 😈 👿 😮 😬 😐 😕 😯 😶 😇 😏 😑 👲 👳 👮 👷 💂 👶 👦 👧 👨 👩 👴 👵 👱 👼 👸 😺 😸 😻 😽 😼 🙀 😿 😹 😾 👹 👺 🙈 🙉 🙊 💀 👽 💩 🔥 ✨ 🌟 💫 💥 💢 💦 💧 💤 💨 👂 👀 👃 👅 👄 👍 👎 👌 👊 ✊ ✌ 👋 ✋ 👐 👆 👇 👉 👈 🙌 🙏 ☝ 👏 💪 🚶 🏃 💃 👫 👪 👬 👭 💏 💑 👯 🙆 🙅 💁 🙋 💆 💇 💅 👰 🙎 🙍 🙇 🎩 👑 👒 👟 👞 👡 👠 👢 👕 👔 👚 👗 🎽 👖 👘 👙 💼 👜 👝 👛 👓 🎀 🌂 💄 💛 💙 💜 💚 ❤ 💔 💗 💓 💕 💖 💞 💘'.split(' '),
         emojiBoxWidth:window.innerWidth<767? 200:400,
-        file:''
+        file:'',
+        audio:'',
+        isRecord:false,
+        src:'',
+        autoplay:false
       }
     },
     computed:{
@@ -144,12 +155,14 @@
         this.$socket.emit('sendMsg',{
           from:this.userName,
           to:this.friend,
+          timeStamp:new Date().getTime(),
           content:content
         })
         this.socket_sendMsg({
           from:this.userName,
           to:this.friend,
           content:content,
+          timeStamp:new Date().getTime(),
           chatid:[this.friend,this.userName].sort().join('_')
         })
       },
@@ -217,6 +230,24 @@
           this.file = ''
         })
       },
+      uploadAudio(){
+        let formData = new FormData()
+        formData.append('audio', this.audio)
+        apiManage.uploadVoiceMsg(formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': this.token,
+            'userName': this.userName
+          }
+        }).then(res => {
+          if (res.data) {
+            let content =
+              `[media]${res.data}`
+            this.emitMsg(content)
+          }
+          this.audio = ''
+        })
+      },
       beforeAvatarUpload (file) {
         const isImage = file.type.includes('image')
         const isLt4M = file.size / 1024 / 1024 < 4
@@ -231,6 +262,45 @@
         this.file = file
         return true
       },
+      startRecordVoice(){
+        if(!this.isRecord){
+          this.isRecord = true
+          startRecord()
+          this.$notify({
+            title: '提示',
+            message: '正在录音',
+            duration: 1000
+          });
+        }else{
+          let _this = this
+          this.isRecord =false
+          this.$notify({
+            title: '提示',
+            message: '录音完毕',
+            duration: 1000
+          });
+          stopRecord(function(){
+            _this.audio = getRecordFile()
+            _this.uploadAudio()
+          });
+        }
+
+      },
+      getHtml(content,side){
+        return /\[media]/.test(content)
+          ? side
+            ? `<img src="https://blog.calabash.top/voice_right.svg" style="color:white">`
+            : `<img src="https://blog.calabash.top/voice_left.svg">`
+          : content
+      },
+      play(src){
+        this.autoplay = false
+        if(/\[media]/.test(src)){
+          this.src = src.split(']')[1]
+          document.getElementById('audio').load()
+          this.autoplay = true
+        }
+      }
     },
     created(){
       apiManage.getChatList({user:this.userName}).then(res=>{
@@ -254,7 +324,8 @@
     flex:0 1 800px;
     height: 70%;
     box-sizing: padding-box;
-    box-shadow: 1px -1px 1px 1px ;
+    border:1px solid rgba(100,100,100,.3);
+
   }
   .fl-center{
     display: flex;
@@ -425,6 +496,9 @@
     width: 22px;
     height: 22px;
     margin: 0 5px;
+  }
+  .audio{
+    display: none;
   }
   @media (max-width: 767px) {
     .tim{
