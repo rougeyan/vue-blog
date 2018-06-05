@@ -40,6 +40,13 @@ import {mapActions, mapGetters,mapMutations} from 'vuex'
 import api from '../../service/apiManage'
 export default{
   name: 'ManageSetting',
+  data(){
+    return{
+      imageUrl: '',
+      file :'',
+      fileList: []
+    }
+  },
   computed: {
     ...mapGetters([
       'userInfo',
@@ -47,13 +54,6 @@ export default{
       'avatar',
       'token'
     ]),
-  },
-  data(){
-    return{
-      imageUrl: '',
-      file :'',
-      fileList: []
-    }
   },
   methods: {
     ...mapActions([

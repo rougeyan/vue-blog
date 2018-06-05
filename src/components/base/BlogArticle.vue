@@ -1,9 +1,11 @@
 <template>
   <div class="index-main">
+    <!--文章内容区域-->
     <div class="post">
       <h1>{{idea.blogTitle}}</h1>
       <h3 class="date" >{{formatDate}}&nbsp;&nbsp;&nbsp;&nbsp;浏览次数:{{idea.count}}次</h3>
       <div v-html="compiledMarkdown" class="markdown-body" @click="scaleImg($event)"></div>
+      <!--评论区域-->
       <Comment
         :commentList="idea.comment"
         :blogDate="idea.blogDate"
@@ -15,10 +17,12 @@
       >
       </Comment>
     </div>
+    <!--翻页按钮-->
     <div class="operator">
       <a id="newer" class="blog-nav" @click.prevent="openOtherBlogs(idea.lastBlogDate)">&nbsp;&lt;上一篇</a>
       <a id="older" class="blog-nav" @click.prevent="openOtherBlogs(idea.nextBlogDate)">下一篇&nbsp;&gt;</a>
     </div>
+    <!--图片查看遮罩-->
     <el-dialog :visible.sync="dialogVisble"
                custom-class="fake"
                :show-close="false">
@@ -33,9 +37,8 @@ import {formatDateEng, formatDate} from '../../lib/lib'
 import Comment from './Comment.vue'
 export default{
   props: ['id', 'user', 'users', 'currentBlogList'],
-  watch: {
-    // 如果路由有变化，会再次执行该方法
-    '$route': '_getIdea'
+  components: {
+    Comment
   },
   data () {
     return {
@@ -43,9 +46,6 @@ export default{
       dialogSrc: '',
       commentList: []
     }
-  },
-  components: {
-    Comment
   },
   computed: {
     compiledMarkdown: function () {
@@ -55,6 +55,13 @@ export default{
       return formatDateEng(this.idea.blogDate)
     },
     ...mapGetters({idea: 'currentBlog'})
+  },
+  watch: {
+    // 如果路由有变化，会再次执行该方法
+    '$route': '_getIdea'
+  },
+  created () {
+    this._getIdea()
   },
   methods: {
     ...mapActions([
@@ -80,9 +87,6 @@ export default{
         this.dialogVisble = true
       }
     }
-  },
-  created () {
-    this._getIdea()
   }
 }
 </script>

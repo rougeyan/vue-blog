@@ -55,6 +55,15 @@ export default{
       'blogList'
     ])
   },
+  mounted () {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleResize)
+  },
+  created () {
+    this._getIdeaList()
+  },
   methods: {
     ...mapActions([
       'getIdeaList',
@@ -76,15 +85,6 @@ export default{
     handleResize () {
       this.isShow = window.innerWidth < 420
     }
-  },
-  mounted () {
-    window.addEventListener('resize', this.handleResize)
-  },
-  beforeDestroy () {
-    window.removeEventListener('resize', this.handleResize)
-  },
-  created () {
-    this._getIdeaList()
   }
 }
 </script>

@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <div class="manage-container">
+      <!--侧边栏区域-->
       <manage-side-bar :users="users"></manage-side-bar>
+      <!--右侧内容区域-->
       <router-view :users="users"></router-view>
     </div>
   </div>
@@ -13,14 +15,14 @@ import {mapGetters} from 'vuex'
 
 export default{
   name: 'Manage',
+  components: {
+    'manage-side-bar': ManageSideBar
+  },
   computed: {
     ...mapGetters([
       'users',
       'token'
     ])
-  },
-  components: {
-    'manage-side-bar': ManageSideBar
   }
 }
 </script>

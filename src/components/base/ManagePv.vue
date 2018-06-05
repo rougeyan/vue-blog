@@ -57,6 +57,9 @@ export default {
       'userName'
     ])
   },
+  created () {
+    this.getPv()
+  },
   methods: {
     getPv () {
       (async function () {
@@ -68,9 +71,6 @@ export default {
         }
       }.bind(this))()
     }
-  },
-  created () {
-    this.getPv()
   }
 }
 </script>

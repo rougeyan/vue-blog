@@ -1,13 +1,18 @@
 <template>
   <div class="page-container">
     <div class="index-container">
-      <blog-index-header :user="user" :users="users" ></blog-index-header>
+      <!--header组件 接受参数 当前路由匹配的user-->
+      <blog-index-header :user="user"></blog-index-header>
+      <!--链接组件 接受参数:infoList-->
       <blog-index-links @openDialog="openDialog" :infoList="infoList"></blog-index-links>
+      <!--文章列表部分 传递参数:文章列表-->
       <transition name="move" mode="out-in">
-        <router-view :users="users" :currentBlogList="currentBlogList"></router-view>
+        <router-view :currentBlogList="currentBlogList"></router-view>
       </transition>
+      <!--登陆弹窗部分 传递参数:openLoginDialog-->
       <login-dialog :openLoginDialog="openLoginDialog" @closeDialog="closeDialog"></login-dialog>
     </div>
+    <!--canvas特效区域-->
     <canvas id="canvas" style="width:100%; height:100%"></canvas>
   </div>
 </template>
@@ -21,6 +26,11 @@ export default{
   name: 'index',
   // 来源为router动态参数
   props: ['user'],
+  components: {
+    'blog-index-header': BlogHeader,
+    'blog-index-links': BlogLinks,
+    'login-dialog': LoginDialog
+  },
   data () {
     return {
       infoList: {
@@ -29,11 +39,6 @@ export default{
         weibo: 'https://weibo.com/'
       }
     }
-  },
-  components: {
-    'blog-index-header': BlogHeader,
-    'blog-index-links': BlogLinks,
-    'login-dialog': LoginDialog
   },
   computed: {
     ...mapGetters([
@@ -49,37 +54,6 @@ export default{
     // 如果路由有变化，会再次执行该方法
     '$route': function () {
       this.getInfo()
-    }
-  },
-  methods: {
-    ...mapMutations([
-      'OPEN_LOGIN_DIALOG'
-    ]),
-    ...mapActions([
-      'checkStatus',
-      'getUserInfo'
-    ]),
-    openDialog () {
-      // 如果本地有token,检验token,没有就打开登录窗口
-      if (this.token) {
-        this.checkStatus({userName: this.users.userName})
-      } else {
-        this.OPEN_LOGIN_DIALOG(true)
-      }
-    },
-    closeDialog () {
-      if (this.openLoginDialog) {
-        this.OPEN_LOGIN_DIALOG(false)
-      }
-    },
-    getInfo () {
-      this.getUserInfo({userName: this.user}).then(res => {
-        if (res === 1) {
-          this.infoList = this.userInfo
-        } else {
-          this.infoList = res
-        }
-      })
     }
   },
   created () {
@@ -195,6 +169,37 @@ export default{
     })
     resizeReset()
     setup()
+  },
+  methods: {
+    ...mapMutations([
+      'OPEN_LOGIN_DIALOG'
+    ]),
+    ...mapActions([
+      'checkStatus',
+      'getUserInfo'
+    ]),
+    openDialog () {
+      // 如果本地有token,检验token,没有就打开登录窗口
+      if (this.token) {
+        this.checkStatus({userName: this.users.userName})
+      } else {
+        this.OPEN_LOGIN_DIALOG(true)
+      }
+    },
+    closeDialog () {
+      if (this.openLoginDialog) {
+        this.OPEN_LOGIN_DIALOG(false)
+      }
+    },
+    getInfo () {
+      this.getUserInfo({userName: this.user}).then(res => {
+        if (res === 1) {
+          this.infoList = this.userInfo
+        } else {
+          this.infoList = res
+        }
+      })
+    }
   }
 }
 </script>

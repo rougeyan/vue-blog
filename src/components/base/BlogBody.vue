@@ -1,5 +1,6 @@
 <template>
   <div class="index-main">
+    <!--文章列表-->
     <ul class="list"
         v-infinite-scroll="loadMore"
         infinite-scroll-disabled="busy"
@@ -19,13 +20,16 @@ import {formatDateEng, throttle} from '../../lib/lib'
 import { mapActions, mapMutations } from 'vuex'
 export default{
   name: 'BlogBody',
-  props: ['user', 'users', 'currentBlogList'],
+  props: ['user', 'currentBlogList'],
   data () {
     return {
       busy: false,
       pgN: 1,
       pgS: 8
     }
+  },
+  created () {
+    this.getCurrentBlogList({userName: this.user, type: 'public', pgN: 1, pgS: this.pgS})
   },
   methods: {
     ...mapActions([
@@ -47,9 +51,6 @@ export default{
       }
       getNext.bind(this)()
     }
-  },
-  created () {
-    this.getCurrentBlogList({userName: this.user, type: 'public', pgN: 1, pgS: this.pgS})
   }
 }
 </script>

@@ -54,6 +54,12 @@ export default{
       'userName'
     ])
   },
+  mounted () {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleResize)
+  },
   methods: {
     ...mapMutations([
       'BACK_INDEX'
@@ -67,12 +73,6 @@ export default{
     handleResize () {
       this.isCollapse = window.innerWidth < 480
     }
-  },
-  mounted () {
-    window.addEventListener('resize', this.handleResize)
-  },
-  beforeDestroy () {
-    window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>

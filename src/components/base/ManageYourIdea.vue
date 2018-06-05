@@ -1,5 +1,6 @@
 <template>
   <div class="manage-right">
+    <!--表单-->
     <el-form ref="form" :rules="rules" :model="idea" class="form-container">
       <el-form-item prop="blogTitle" class="title">
         <el-input style="width: 50%" v-model="idea.blogTitle" placeholder="文章标题"></el-input>
@@ -8,17 +9,20 @@
         <el-radio v-model="idea.blogType" label="public">公开</el-radio>
         <el-radio v-model="idea.blogType" label="private">私密</el-radio>
       </el-form-item>
+      <!--编辑/查看区域-->
       <el-form-item class="text">
         <div id="editor" class="post">
           <textarea :value="idea.blogContent" @input="update" class="text-textarea"></textarea>
           <div v-html="compiledMarkdown" class="text-content markdown-body"></div>
         </div>
       </el-form-item>
+      <!--按钮区域-->
       <el-form-item class="submit">
         <el-button plain style="margin-top: 20px" @click="sendIdea">发布</el-button>
         <el-button type="primary" style="margin-top: 20px" @click="openDialog">上传</el-button>
       </el-form-item>
     </el-form>
+    <!--上传图片弹窗-->
     <el-dialog :visible="dialogVisble"
                @close="closeDialog">
       <el-upload

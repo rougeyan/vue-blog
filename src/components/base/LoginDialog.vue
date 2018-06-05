@@ -2,7 +2,6 @@
   <el-dialog  :visible.sync="openLoginDialog"
               width="50vmin"
               :before-close="handleClose">
-
     <el-tabs v-model="activeName">
       <el-tab-pane label="Login" name="login"></el-tab-pane>
       <el-tab-pane label="Register" name="Register"></el-tab-pane>
@@ -14,7 +13,7 @@
         </el-input>
       </el-form-item>
       <el-form-item prop="userPwd">
-        <el-input type="password" v-model="form.userPwd" placeholder="密码">
+        <el-input type="password" v-model="form.userPwd" placeholder="密码" @keyup.enter="sendRequest">
 
         </el-input>
       </el-form-item>
@@ -37,11 +36,6 @@ export default{
       default: false
     }
   },
-  computed: {
-    signIn () {
-      return this.activeName === 'login' ? 'LOG IN' : 'SIGN UP'
-    }
-  },
   data () {
     return {
       activeName: 'login',
@@ -55,6 +49,11 @@ export default{
         userPwd: [{ required: true, message: '请输入密码', trigger: 'blur' },
           { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }]
       }
+    }
+  },
+  computed: {
+    signIn () {
+      return this.activeName === 'login' ? 'LOG IN' : 'SIGN UP'
     }
   },
   methods: {

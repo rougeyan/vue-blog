@@ -7,7 +7,7 @@
 <script>
 export default{
   name: 'BlogHeader',
-  props: ['user', 'users']
+  props: ['user']
 }
 </script>
 

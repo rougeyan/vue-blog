@@ -142,6 +142,14 @@
         })
       }
     },
+    created(){
+      apiManage.getChatList({user:this.userName}).then(res=>{
+        if(res.errno===0){
+          this.chatlist = res.data
+          this._getChatData(this.chatlist[0])
+        }
+      })
+    },
     mounted(){
       this.$socket.emit('connect','test参数'); //在这里触发connect事件
       this.$socket.emit('online',this.userName)
@@ -263,33 +271,32 @@
         return true
       },
       startRecordVoice(){
-        if(!this.isRecord){
-          this.isRecord = true
-          startRecord()
-          this.$notify({
-            title: '提示',
-            message: '正在录音',
-            duration: 1000
-          });
-        }else{
-          let _this = this
-          this.isRecord =false
-          this.$notify({
-            title: '提示',
-            message: '录音完毕',
-            duration: 1000
-          });
-          stopRecord(function(){
-            _this.audio = getRecordFile()
-            _this.uploadAudio()
-          });
-        }
-
+          if(!this.isRecord){
+            this.isRecord = true
+            startRecord()
+            this.$notify({
+              title: '提示',
+              message: '正在录音',
+              duration: 1000
+            });
+          }else{
+            let _this = this
+            this.isRecord =false
+            this.$notify({
+              title: '提示',
+              message: '录音完毕',
+              duration: 1000
+            });
+            stopRecord(function(){
+              _this.audio = getRecordFile()
+              _this.uploadAudio()
+            });
+          }
       },
       getHtml(content,side){
         return /\[media]/.test(content)
           ? side
-            ? `<img src="https://blog.calabash.top/voice_right.svg" style="color:white">`
+            ? `<img src="https://blog.calabash.top/voice_right.svg">`
             : `<img src="https://blog.calabash.top/voice_left.svg">`
           : content
       },
@@ -301,14 +308,6 @@
           this.autoplay = true
         }
       }
-    },
-    created(){
-      apiManage.getChatList({user:this.userName}).then(res=>{
-        if(res.errno===0){
-          this.chatlist = res.data
-          this._getChatData(this.chatlist[0])
-        }
-      })
     }
   }
 </script>
