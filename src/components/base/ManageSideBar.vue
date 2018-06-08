@@ -77,12 +77,9 @@ export default{
 }
 </script>
 
-<style>
+<style scoped lang="less">
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
     min-height: 400px;
-  }
-  .manage-left{
-    padding-right: 24px;
   }
 </style>

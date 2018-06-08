@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container fl-column">
     <el-date-picker
       v-model="date"
       type="date"
@@ -75,17 +75,15 @@ export default {
 }
 </script>
 
-<style scoped>
-  .table{
-    overflow: scroll;
-  }
+<style scoped lang="less">
   .container{
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  .date{
-    margin: 20px;
+    .date{
+      margin: 20px;
+    }
+    .table{
+      overflow: scroll;
+    }
   }
 </style>

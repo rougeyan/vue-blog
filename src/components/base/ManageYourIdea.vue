@@ -1,7 +1,7 @@
 <template>
   <div class="manage-right">
     <!--表单-->
-    <el-form ref="form" :rules="rules" :model="idea" class="form-container">
+    <el-form ref="form" :rules="rules" :model="idea" class="form-container fl-column">
       <el-form-item prop="blogTitle" class="title">
         <el-input style="width: 50%" v-model="idea.blogTitle" placeholder="文章标题"></el-input>
       </el-form-item>
@@ -191,34 +191,41 @@ export default{
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+  @import '../../assets/style/index.less';
+
   .form-container{
-    display: flex;
-    flex-direction: column;
     width: 100%;
-  }
-  #editor{
-    display: flex;
-    flex-direction: row;
-    min-height: 50vh;
-  }
-  .text-textarea{
-    min-height: 50vh;
-    flex:0 0 450px;
-  }
-  .text-content{
-    flex:0 0 450px;
-    padding: 15px;
-    min-height: 50vh;
-    background-color: rgba(0,0,0,.1);
-  }
-  @media screen and (max-width: 600px) {
-    #editor{
-      flex-direction: column;
+    .text #editor{
+      .fl-row;
+      min-height: 50vh;
+
+      textarea {
+        border: 1px solid @borderColor;
+        resize: none;
+        outline: none;
+      }
+      @media (max-width: 600px){
+        flex-direction: column;
+      }
     }
-    .text-textarea,.text-content{
-      flex:0 1 100%;
-      margin: 5px;
+    .text-textarea,
+    .text-content{
+      flex:0 0 450px;
+      min-height: 50vh;
+    }
+    .text-content{
+      padding: 15px;
+      background-color: @grayColor;
+    }
+    @media (max-width: 600px) {
+      .text-textarea,
+      .text-content{
+        flex:0 0 100%;
+        margin: 5px;
+      }
     }
   }
+
+
 </style>

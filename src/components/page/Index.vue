@@ -204,56 +204,30 @@ export default{
 }
 </script>
 
-<style >
-  #canvas{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top:0;
-    left:0;
-    z-index:-1;
-  }
+<style lang="less">
+  @import '../../assets/style/index.less';
   .page-container{
     display: flex;
     justify-content: center;
     width: inherit;
     height: inherit;
-  }
-  .index-container{
-    display: flex;
-    flex-direction: column;
-    flex:0 1 700px;
-    width: inherit;
-    height: inherit;
 
-  }
-  .index-header{
-    margin-top: 50px;
-    letter-spacing: 5px;
-    cursor: pointer;
-    text-align: center;
-  }
-  .index-links{
-    margin-top: 20px;
-    text-align: center;
-  }
-  .index-main{
-    margin-top: 20px;
-  }
-  .index-links a {
-    cursor: pointer;
-    margin: 0 5px;
-  }
-  .index-links img {
-    width: 15px;
-    height: 15px;
-  }
-  @media screen and (max-width: 700px) {
-    .index-main{
-      margin: 10px;
+    .index-container{
+      .fl-column;
+      flex:0 1 700px;
+      width: inherit;
+      height: inherit;
+    }
+
+    #canvas{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top:0;
+      left:0;
+      z-index:-1;
     }
   }
-
 </style>
 
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--pc端样式-->
+    <!--移动端样式-->
     <div class="section0" v-if="showBtnGroup">
       <div @click="like">
         <el-badge class="mark" :value="likeCount" />
@@ -13,13 +13,13 @@
         <img src="../../assets/collect32.svg" alt="">
       </div>
     </div>
-    <!--移动端样式-->
+    <!--pc端样式-->
     <div class="btnGroup" v-else>
-      <div @click="like" :class="likeit?'red':''" class="likeCount">
+      <div @click="like" class="likeCount icon" :class="likeit?'red':''" >
         <el-badge class="mark" :value="likeCount" />
       </div>
-      <div @click="collect"></div>
-      <div @click="share" class="share"></div>
+      <div @click="collect" class="icon"></div>
+      <div @click="share" class="share icon"></div>
     </div>
     <!--评论区域-->
     <div class="section1">
@@ -155,22 +155,31 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+  @import '../../assets/style/index.less';
+
   .section0,.section1,.section2{
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(247,247,247);
+    .fl-column;
+    background-color: @grayColor;
     padding:10px;
     margin: 10px 0;
+  }
+  .section0,.btnGroup{
+    .mark{
+      position: absolute;
+      top:-7px;
+      right:-7px;
+    }
   }
   .section0{
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-  }
-  .section0>div{
-    cursor: pointer;
-    position: relative;
+
+    div{
+      position: relative;
+      cursor: pointer;
+    }
   }
   .btnGroup{
     position: fixed;
@@ -178,78 +187,77 @@ export default {
     flex-direction: column;
     left:calc(50% - 350px - 32px);
     top:16rem;
-  }
-  .btnGroup>div{
-    position: relative;
-    height: 36px;
-    width: 36px;
-    margin: 10px;
-    border:1px solid rgba(123,123,123,.1);
-    background-color: rgb(245,245,245);
-    cursor:pointer;
-    border-radius: 50%;
-  }
-  .btnGroup>div:nth-child(1){
-    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iI0M2QzZDNiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4=)
-                no-repeat
-                center center;
-  }
 
-  .btnGroup>div:nth-child(2){
-    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOSI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTMuNiAxMi45NkgxMXYxaDIuNnYyLjZoMXYtMi42aDIuNnYtMWgtMi42di0yLjZoLTF2Mi42ek0xIDIuOTZoMTYuMnYxSDF2LTF6bTAgNC45NWgxNi4ydjFIMXYtMXptMCA1LjA1aDl2MUgxdi0xeiIvPjwvc3ZnPgo=)
-                no-repeat
-                center center;
-  }
-  .btnGroup>div:nth-child(3){
-    background: url(../../assets/分享.svg)
-                no-repeat
-                center center;
-  }
-  .mark{
-    position: absolute;
-    right:-7px;
-    top:-7px;
-  }
-  .send{
-    align-self: flex-end;
-    margin-top:10px;
-  }
-  .comment{
-    display: flex;
-    background-color: white;
-    margin: 10px 0;
-  }
-  .comment-body{
-    display: flex;
-    flex-direction: column;
-    align-content: space-around;
-    width: 100%;
-    padding: 10px;
-  }
-  .avatar{
-    border-radius: 50%;
-    height: 36px;
-    width: 36px;
-    margin: 5px;
-  }
-  .user{
-    font-size: 16px;
-    font-weight: 600;
-    color:#333;
-  }
-  .red{
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4K)!important;
-  }
-  .text{
+    .icon{
+      position: relative;
+      height: 36px;
+      width: 36px;
+      margin: 10px;
+      border:1px solid @borderColor;
+      background-color: @grayColor;
+      cursor:pointer;
+      border-radius: 50%;
 
+      &:nth-child(1){
+        background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iI0M2QzZDNiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4=)
+          no-repeat
+          center center;
+      }
+      &:nth-child(2){
+        background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOSI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTMuNiAxMi45NkgxMXYxaDIuNnYyLjZoMXYtMi42aDIuNnYtMWgtMi42di0yLjZoLTF2Mi42ek0xIDIuOTZoMTYuMnYxSDF2LTF6bTAgNC45NWgxNi4ydjFIMXYtMXptMCA1LjA1aDl2MUgxdi0xeiIvPjwvc3ZnPgo=)
+          no-repeat
+          center center;
+      }
+      &:nth-child(3){
+        background: url(../../assets/分享.svg)
+          no-repeat
+          center center;
+      }
+      .red{
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4K)!important;
+      }
+    }
   }
-  .time{
-    align-self: flex-end;
-    padding: 5px;
-    border: 1px solid rgba(0,0,0,.1);
-    border-radius: 15px;
-    background-color:  rgb(247,247,247);
-    font-size: 12px;
+  .section1{
+    .send{
+      align-self: flex-end;
+      margin-top:10px;
+    }
+  }
+  .section2{
+    .comment{
+      display: flex;
+      background-color: white;
+      margin: 10px 0;
+      .avatar{
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 36px;
+        width: 36px;
+        margin: 5px;
+      }
+    }
+    .comment-body{
+      .fl-column;
+      align-content: space-around;
+      width: 100%;
+      padding: 10px;
+
+
+      .user{
+        font-weight: 600;
+        color:#333;
+      }
+      .time{
+        align-self: flex-end;
+        padding: 5px;
+        border: 1px solid @borderColor;
+        border-radius: 15px;
+        background-color: @grayColor;
+        font-size: @timeFont;
+      }
+    }
+
   }
 
 </style>

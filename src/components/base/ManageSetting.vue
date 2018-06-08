@@ -18,7 +18,6 @@
       </el-form-item>
       <el-form-item label="设置头像">
         <el-upload
-          class="upload-demo"
           drag
           :show-file-list="false"
           :file-list="fileList"
@@ -103,28 +102,32 @@ export default{
 }
 </script>
 
-<style scoped>
-.el-upload--text{
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
+<style scoped lang="less">
+  @import '../../assets/style/index.less';
+
+  .margin-right{
+    .el-upload--text{
+      border: 1px dashed @borderColor;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+      border-color: @blueBorder;
+    }
+    .avatar-uploader-icon {
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+  }
+
 </style>

@@ -28,4 +28,21 @@ export default{
 }
 </script>
 
+<style lang="less" scoped>
+  .index-links{
+    margin-top: 20px;
+    text-align: center;
+
+    a{
+      cursor: pointer;
+      margin: 0 5px;
+
+      img{
+        width: 15px;
+        height: 15px;
+      }
+    }
+  }
+</style>
+
 

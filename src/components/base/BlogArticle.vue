@@ -10,7 +10,7 @@
         :commentList="idea.comment"
         :blogDate="idea.blogDate"
         :user="user"
-        :currentUser="users.userName"
+        :currentUser="userName"
         :blogTitle="idea.blogTitle"
         :likeCount.sync="idea.likeCount"
         @commitSuccess="_getIdea"
@@ -33,10 +33,10 @@
 
 <script type="text/ecmascript-6">
 import { mapActions, mapGetters} from 'vuex'
-import {formatDateEng, formatDate} from '../../lib/lib'
+import {formatDateEng} from '../../lib/lib'
 import Comment from './Comment.vue'
 export default{
-  props: ['id', 'user', 'users', 'currentBlogList'],
+  props: ['id', 'user', 'currentBlogList'],
   components: {
     Comment
   },
@@ -54,7 +54,10 @@ export default{
     formatDate () {
       return formatDateEng(this.idea.blogDate)
     },
-    ...mapGetters({idea: 'currentBlog'})
+    ...mapGetters({
+      idea:'currentBlog',
+      userName:'userName'
+    })
   },
   watch: {
     // 如果路由有变化，会再次执行该方法
@@ -91,68 +94,118 @@ export default{
 }
 </script>
 
-<style>
-  .markdown-body{
-    max-width: 700px;
-  }
+<style lang="less" scoped>
+  @import "../../assets/style/index.less";
+  .index-main{
+    margin-top: 20px;
+    @media (max-width: 700px) {
+      margin: 10px;
+    }
+    @media (max-width:420px){
+      margin: 32px 0 0 0;
+    }
+    .post{
+      position: relative;
+      padding: 15px;
+      border-bottom: 1px solid #e6e6e6;
 
-  .blog-nav {
-    position: fixed;
-    bottom: 20px;
-    height: 20px;
-    line-height: 20px;
-    font-family: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, sans-serif;
-    font-size: 15px;
-    color: #999;
-    text-decoration: none;
-    cursor: pointer;
-    letter-spacing: 1px;
-    border-bottom: 3px solid transparent;
-  }
-  .blog-nav:hover {
-    color: #333;
-    border-bottom-color: #333;
-  }
-  #newer {
-    left: 40px;
-  }
-  #older {
-    right: 40px;
-  }
-  .fake{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: none;
-    background-color: rgb(127,127,127);
-    visibility: hidden;
-  }
-  .dialogSrc{
-    visibility: visible;
-    width: 40vw;
-  }
-  @media screen and (max-width: 950px) {
-    .blog-nav {
-      position: absolute;
-      bottom: 30px;
-    }
-    #newer {
-      left: 0;
-    }
-    #older {
-      right: 0;
+      ul{
+        list-style-type:disc;
+      }
+      h1{
+        font-size: 32px;
+        margin: 0 0 45px;
+        letter-spacing: 1px;
+      }
+      .date{
+        font-size: @timeFont;
+        color: #999;
+        margin: 0 0 30px;
+        letter-spacing: 1px;
+      }
+      .markdown-body{
+        max-width: 700px;
+        box-sizing: border-box;
+        padding: 45px;
+        @media (max-width: 767px){
+          padding: 15px;
+        }
+      }
+      @media (max-width: 420px){
+        h1{
+          font-size: 24px;
+          margin: 0 0 30px;
+        }
+        h3{
+          font-size: 12px;
+          margin: 0 0 20px;
+        }
+      }
     }
     .operator{
-      position: relative;
-      height: 60px;
+      .blog-nav{
+        position: fixed;
+        bottom: 20px;
+        height: 20px;
+        line-height: 20px;
+        color: @indexDateColor;
+        text-decoration: none;
+        cursor: pointer;
+        letter-spacing: 1px;
+        border-bottom: 3px solid transparent;
+        &:hover{
+          color: @blackColor;
+          border-bottom-color: @blackColor;
+        }
+      }
+      #newer{
+        left:40px;
+      }
+      #older{
+        right:40px;
+      }
+      @media (max-width:420px){
+        .blog-nav {
+          font-size: 14px;
+        }
+      }
+      @media (max-width:950px){
+        position: relative;
+        height: 60px;
+
+        .blog-nav {
+          position: absolute;
+          bottom: 30px;
+        }
+        #newer {
+          left: 0;
+        }
+        #older {
+          right: 0;
+        }
+      }
     }
-    .dialogSrc{
-      width: 50vw;
+    .fake{
+      .fl-column;
+      align-items: center;
+      box-shadow: none;
+      background-color: rgb(127,127,127);
+      visibility: hidden;
+
+      .dialogSrc{
+        visibility: visible;
+        width: 40vw;
+
+        @media (max-width:950px){
+          width: 50vw;
+        }
+        @media (max-width:480px){
+          width:70vw;
+        }
+      }
     }
-  }
-  @media screen and (max-width:480px){
-    .dialogSrc{
-      width: 70vw;
+    .el-dialog{
+      background-color: transparent;
     }
   }
 </style>

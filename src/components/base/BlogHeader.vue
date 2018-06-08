@@ -11,3 +11,13 @@ export default{
 }
 </script>
 
+<style scoped lang="less">
+  .index-header{
+    margin-top: 50px;
+    letter-spacing: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 400;
+  }
+</style>
+

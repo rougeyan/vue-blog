@@ -62,7 +62,7 @@ export const updateIdea = function({commit,state},data){
 
   })
 }
-/*获取某条博文 暂未用到*/
+/*获取某条博文*/
 export const getIdea = function({commit,state},data){
   apiManage.getIdea(data).then(res=>{
     if(res.errno===0){

@@ -28,6 +28,9 @@ export function formatDate(){
 
 }
 export function formatDateEng(value){
+  if(!value){
+    return
+  }
   let year = value.substr(0,4),
     month = value.substr(4,2),
     day = value.substr(6,2)
