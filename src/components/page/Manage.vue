@@ -39,10 +39,10 @@ export default{
   }
   .manage-right{
     flex:1 1 900px;
-    margin: 20px 0 0 30px;
+    margin: 20px 30px 0 30px;
     @media (max-width: 480px){
       flex:0 0 100%;
-      margin: 10px 0 0 10px;
+      margin: 10px 10px 0 10px;
     }
   }
 </style>

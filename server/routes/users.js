@@ -50,7 +50,7 @@ router.get('/comment',blogController.getComment)
 router.post('/like',blogController.likeBlog)
 //web push
 router.post('/subscription',blogController.subscription)
-//隋松
+//推送
 router.post('/push',blogController.push)
 
 module.exports = {

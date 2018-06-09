@@ -11,7 +11,8 @@ let userSchema = new mongoose.Schema({
   },
   "likeList":[{
     "author":String,
-    "blogDate":String
+    "blogDate":String,
+    "blogTitle":String
   }],
   "blogList":[{
     "blogTitle":String,

@@ -1,8 +1,12 @@
 {
   "name": "vue-blog",
   "version": "1.0.0",
-  "description": "calabash's blog",
+  "description": "Calabash's blog",
   "author": "Caaalabash <1121062986@qq.com>",
+  "keywords": [
+    "vue",
+    "blog"
+  ],
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

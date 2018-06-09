@@ -71,7 +71,7 @@ async function getUser(req,res,next){
     '/files',
     '/pv',
     '/subscription',
-    '/push',
+    '/push'
   ]
   if(!noValidUser.includes(req.path)){
     let userName = req.body.userName || req.query.userName || req.headers['username']

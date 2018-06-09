@@ -47,7 +47,8 @@ export default{
       'users',
       'token',
       'userInfo',
-      'currentBlogList'
+      'currentBlogList',
+      'lineColor'
     ])
   },
   watch: {
@@ -70,7 +71,7 @@ export default{
       drawArea = canvasBody.getContext('2d')
     const opts = {
       ballColor: 'rgb(200,200,200)',
-      lineColor: 'rgb(153,153,153)',
+      lineColor: this.lineColor,
       ballCount: count,
       linkDistance: distance,
       defaultRadius: 1,

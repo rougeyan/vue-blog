@@ -194,7 +194,7 @@ async function getComment(req,res){
 }
 //喜欢/取消喜欢文章
 async function likeBlog(req,res){
-  let {userName,user,blogDate} = req.body
+  let {userName,user,blogDate,blogTitle,flag} = req.body
   let blogList = req._userObj.blogList
   let query = await users.findOne({'userName':user})
 
@@ -216,7 +216,8 @@ async function likeBlog(req,res){
       let count = ''
       query.likeList.push({
         author:userName,
-        blogDate:blogDate
+        blogDate:blogDate,
+        blogTitle:blogTitle
       })
       await query.save()
       req._userObj.blogList.forEach((item,index)=>{

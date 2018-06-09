@@ -15,7 +15,9 @@ const initState = {
   openLoginDialog:false,
   //聊天
   connect:false,
-  message:[]
+  message:[],
+  //canvas换肤
+  lineColor:''
 };
 
 const state = {

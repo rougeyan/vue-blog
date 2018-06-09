@@ -118,6 +118,7 @@ export default {
       }
       this.likethis({
         blogDate: this.blogDate,
+        blogTitle:this.blogTitle,
         userName: this.user,
         user: this.currentUser,
         flag: this.likeit
@@ -132,7 +133,7 @@ export default {
         this.$message.error('请登录:)')
         return false
       }
-      if (this.textarea.length < 6) {
+      if (this.textarea.trim().length < 6) {
         this.$message.error('评论长度不足:(')
         return false
       }

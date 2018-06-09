@@ -35,3 +35,5 @@ export const likeList = state =>state.users.likeList || []
 export const avatar = state => state.users.avatar || ''
 
 export const message = state => state.message || []
+
+export const lineColor = state => state.lineColor || 'rgb(153,153,153)'

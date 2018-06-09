@@ -100,6 +100,9 @@ const mutations = {
     if(data[0].from!==state.users.userName){
       state.message.push(data[0])
     }
+  },
+  [types.SET_CANVAS_LINECOLOR](state,data){
+    state.lineColor = data
   }
 }
 export default  mutations
