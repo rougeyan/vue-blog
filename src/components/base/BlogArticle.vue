@@ -1,5 +1,7 @@
 <template>
-  <div class="index-main">
+  <div class="index-main"
+       v-loading.fullscreen.lock="fullScreenLoading"
+  >
     <!--文章内容区域-->
     <div class="post">
       <h1>{{idea.blogTitle}}</h1>
@@ -24,8 +26,7 @@
     </div>
     <!--图片查看遮罩-->
     <el-dialog :visible.sync="dialogVisble"
-               custom-class="fake"
-               :show-close="false">
+               custom-class="fake">
       <img :src="dialogSrc" alt="" class="dialogSrc">
     </el-dialog>
   </div>
@@ -44,7 +45,8 @@ export default{
     return {
       dialogVisble: false,
       dialogSrc: '',
-      commentList: []
+      commentList: [],
+      fullScreenLoading:false
     }
   },
   computed: {
@@ -72,7 +74,10 @@ export default{
       'getIdea'
     ]),
     _getIdea () {
-      this.getIdea({userName: this.user, blogDate: this.id})
+      this.fullScreenLoading = true
+      this.getIdea({userName: this.user, blogDate: this.id}).then(res=>{
+        this.fullScreenLoading = false
+      })
     },
     hasSiblings (arr) {
       return index => property => arr[index] ? arr[index][property] : '0'
@@ -96,6 +101,7 @@ export default{
 
 <style lang="less" scoped>
   @import "../../assets/style/index.less";
+
   .index-main{
     margin-top: 20px;
     @media (max-width: 700px) {
@@ -109,9 +115,6 @@ export default{
       padding: 15px;
       border-bottom: 1px solid #e6e6e6;
 
-      ul{
-        list-style-type:disc;
-      }
       h1{
         font-size: 32px;
         margin: 0 0 45px;
@@ -127,6 +130,7 @@ export default{
         max-width: 700px;
         box-sizing: border-box;
         padding: 45px;
+
         @media (max-width: 767px){
           padding: 15px;
         }
@@ -184,28 +188,6 @@ export default{
           right: 0;
         }
       }
-    }
-    .fake{
-      .fl-column;
-      align-items: center;
-      box-shadow: none;
-      background-color: rgb(127,127,127);
-      visibility: hidden;
-
-      .dialogSrc{
-        visibility: visible;
-        width: 40vw;
-
-        @media (max-width:950px){
-          width: 50vw;
-        }
-        @media (max-width:480px){
-          width:70vw;
-        }
-      }
-    }
-    .el-dialog{
-      background-color: transparent;
     }
   }
 </style>

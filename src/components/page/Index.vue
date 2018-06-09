@@ -228,6 +228,27 @@ export default{
       z-index:-1;
     }
   }
+  /*用于假装遮罩层*/
+  .fake{
+    .fl-column;
+    align-items: center;
+    box-shadow: none;
+    background-color: transparent;
+    visibility: hidden;
+
+    .dialogSrc{
+      visibility: visible;
+      width: 40vw;
+
+      @media (max-width:950px){
+        width: 50vw;
+      }
+      @media (max-width:480px){
+        width:70vw;
+      }
+    }
+  }
+
 </style>
 
 

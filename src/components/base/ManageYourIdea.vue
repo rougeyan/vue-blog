@@ -193,7 +193,15 @@ export default{
 
 <style scoped lang="less">
   @import '../../assets/style/index.less';
-
+  /*针对el-upload的响应式css*/
+  .upload-demo{
+    /deep/ .el-upload-dragger{
+      width: 100%;
+    }
+    /deep/ .el-upload{
+      width: 70%;
+    }
+  }
   .form-container{
     width: 100%;
     .text #editor{

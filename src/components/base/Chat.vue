@@ -370,6 +370,7 @@
               }
               .msg-text{
                 display: flex;
+                align-self: center;
                 position:relative;
                 padding: 5px 10px;
                 border-radius: 8px;
@@ -424,7 +425,7 @@
           }
         }
         .toolbar{
-          flex:1;
+          flex:0 0 36px;
           border-top:1px solid rgba(0,0,0,.2);
           display: flex;
           position: relative;
@@ -462,6 +463,8 @@
           flex: 3;
           textarea{
             border:none;
+            resize: none;
+            outline: none;
             background-color: white;
             height:100px;
             width: 95%;
@@ -499,9 +502,13 @@
             height: 35px;
           }
         }
-        .emoji-popover{
-          width: 240px;
-          top:-400px
+        .msg-body{
+          .toolbar{
+            .emoji-popover{
+              width: 240px;
+              top:-400px
+            }
+          }
         }
         .send_btn{
           margin:0 20px 20px 0;

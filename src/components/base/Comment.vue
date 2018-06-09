@@ -157,7 +157,9 @@ export default {
 
 <style scoped lang="less">
   @import '../../assets/style/index.less';
-
+  .red{
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4K)!important;
+  }
   .section0,.section1,.section2{
     .fl-column;
     background-color: @grayColor;
@@ -212,9 +214,6 @@ export default {
         background: url(../../assets/分享.svg)
           no-repeat
           center center;
-      }
-      .red{
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCI+PHBhdGggZmlsbD0iIzc0Q0E0NiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOS4xMzEgMTYuMzU4di4wNDJsLS4wMzEtLjAyMS0uMDMxLjAyMXYtLjA0MmMtLjg3LS41ODktMTAuNDM1LTcuMjI2LTcuNTE3LTEyLjM0OC43NjMtMS4zNCAxLjgwMy0xLjcgMi42OS0xLjkxNiAyLjQ4LS42MDYgNC41OCAxLjkwOCA0Ljg1OCAyLjI1OS4yNzktLjM1MSAyLjM3Ny0yLjg2NSA0Ljg1OS0yLjI2Ljg4Ni4yMTcgMS45MjYuNTc4IDIuNjkgMS45MTdDMTkuNTY1IDkuMTMyIDEwIDE1Ljc2OSA5LjEzIDE2LjM1OHoiLz48L3N2Zz4K)!important;
       }
     }
   }

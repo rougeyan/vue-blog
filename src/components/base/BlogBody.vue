@@ -61,7 +61,7 @@ export default{
     min-height:900px;
 
     .list{
-
+      list-style-type: none;
       li {
         position:relative;
         .fl-row;
