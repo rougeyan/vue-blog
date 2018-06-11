@@ -17,6 +17,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "clipboard": "^2.0.1",
+    "echarts": "^4.1.0",
     "element-ui": "^2.0.11",
     "jsonp": "^0.2.1",
     "less": "^3.0.4",
@@ -30,6 +31,7 @@
     "register-service-worker": "^1.2.0",
     "socket.io-client": "^2.1.1",
     "vue": "^2.5.2",
+    "vue-echarts": "^3.0.7",
     "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1-b",

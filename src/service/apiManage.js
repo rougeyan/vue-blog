@@ -102,5 +102,8 @@ class apiManage extends BaseModule {
   uploadVoiceMsg(obj,config){
     return this.post('v2/chatVoice',obj,config)
   }
+  getApiMonitor(obj,config){
+    return this.post('v3/monitor',obj,config)
+  }
 }
 export default new apiManage()
