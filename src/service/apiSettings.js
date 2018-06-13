@@ -13,7 +13,7 @@ class BaseModule{
       }
     })
     this.cache = []
-    this.expireTime = 3000
+    this.expireTime = 1500
     //请求拦截器
     this.$http.interceptors.request.use(config => {
       if(vuex.state.token){

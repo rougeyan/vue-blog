@@ -105,5 +105,11 @@ class apiManage extends BaseModule {
   getApiMonitor(obj,config){
     return this.post('v3/monitor',obj,config)
   }
+  getPvMonitor(obj,config){
+    return this.get('v3/pv',obj,config)
+  }
+  getAnalayzBlogDate(obj,config){
+    return this.get('v3/analyzeBlogDate',obj,config)
+  }
 }
 export default new apiManage()

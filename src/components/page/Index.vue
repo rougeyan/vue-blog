@@ -6,9 +6,7 @@
       <!--链接组件 接受参数:infoList-->
       <blog-index-links @openDialog="openDialog" :infoList="infoList"></blog-index-links>
       <!--文章列表部分 传递参数:文章列表-->
-      <transition name="move" mode="out-in">
-        <router-view :currentBlogList="currentBlogList"></router-view>
-      </transition>
+      <router-view :currentBlogList="currentBlogList"></router-view>
       <!--登陆弹窗部分 传递参数:openLoginDialog-->
       <login-dialog :openLoginDialog="openLoginDialog" @closeDialog="closeDialog"></login-dialog>
     </div>

@@ -41,7 +41,7 @@
       </el-tab-pane>
       <!--接口日志区域-->
       <el-tab-pane label="接口日志" name="api">
-        <Chart></Chart>
+        <Chart :addressData="addressData"></Chart>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -68,7 +68,22 @@ export default {
     ...mapGetters([
       'token',
       'userName'
-    ])
+    ]),
+    addressData(){
+      let list = this.originData.reduce((acc,item)=>{
+        acc.push(item.address)
+        return acc
+      },[])
+      let map = {}
+      for(let n of list){
+        map[n] ? map[n]++ : map[n] = 1
+      }
+      let data = []
+      for(let n of Object.keys(map)){
+        data.push({value:map[n],name:n})
+      }
+      return data
+    }
   },
 
   mounted(){

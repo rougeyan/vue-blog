@@ -191,6 +191,11 @@ export default{
       }
     }
   }
+  /deep/ .avatar-uploader-icon{
+    height: 178px;
+    line-height: 178px;
+    display: block;
+  }
   /deep/ .avatar {
     width: 178px;
     height: 178px;
