@@ -52,7 +52,10 @@ router.post('/like',blogController.likeBlog)
 router.post('/subscription',blogController.subscription)
 //推送
 router.post('/push',blogController.push)
-
+//收藏
+router.post('/collect',blogController.collect)
+//创建收藏夹
+router.post('/collectList',blogController.createCollect)
 module.exports = {
   users:router
 };

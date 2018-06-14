@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '../components/page/Index.vue'
 import BlogBody from '../components/base/BlogBody.vue'
+import Manage from '../components/page/Manage.vue'
 import store from '../store/index'
 Vue.use(Router)
 
@@ -41,7 +42,7 @@ const router = new Router({
       ]
     },{
       path:'/:user/manage',
-      component:resolve => require(['../components/page/Manage.vue'], resolve),
+      component:Manage,
       props: true,
       meta:{requiresAuth: true},
       children:[

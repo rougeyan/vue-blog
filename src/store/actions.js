@@ -163,4 +163,19 @@ export const getChatData = function({commit,state},data){
     }
   })
 }
-
+//创建新收藏夹
+export const createCollectList = function({commit,state},data){
+  return apiManage.createCollectList(data).then(res=>{
+    if(res.errno===0){
+      commit(types.ADD_COLLECTLIST,{collectTitle:data.title,list:[],collectType:data.type,collectDesc:data.desc})
+    }
+  })
+}
+//添加到收藏夹
+export const addToCollectList = function({commit,state},data){
+  apiManage.collectBlog(data).then(res=>{
+    if(res.errno===0){
+      commit(types.ADD_BLOG_TO_COLLECT,data)
+    }
+  })
+}

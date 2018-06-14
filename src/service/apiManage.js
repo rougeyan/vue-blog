@@ -83,6 +83,22 @@ class apiManage extends BaseModule {
   setAvatar(obj,config){
     return this.post('v1/avatar',obj,config)
   }
+  //获取收藏夹
+  getCollectList(obj,config){
+    return this.get('v1/collectList',obj,config)
+  }
+  //创建收藏夹
+  createCollectList(obj,config){
+    return this.post('v1/collectList',obj,config)
+  }
+  //删除收藏夹
+  deleteCollectList(obj,config){
+    return this.delete('v1/collectList',obj,config)
+  }
+  //收藏
+  collectBlog(obj,config){
+    return this.post('v1/collect',obj,config)
+  }
   subscription(obj){
     return this.post('v1/subscription',obj)
   }

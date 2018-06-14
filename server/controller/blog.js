@@ -273,6 +273,31 @@ async function sendNotification(data){
     }
   }
 }
+//收藏
+async function collect(req,res){
+  let {userName,author,blogDate,collect} = req.body
+  let index = req._user.collectList.findIndex(item=>item.collectTitle===collect)
+  if(req._user.collectList[index].list.some(item=>item.blogDate===blogDate)){
+    return res.json(response(1,'','已收藏该文章'))
+  }
+  req._user.collectList[index].list.push({author,blogDate})
+  await req._user.save()
+  return res.json(response(0,'','收藏成功'))
+}
+//创建收藏夹
+async function createCollect(req,res){
+  let {userName,...obj} = req.body
+  if(req._user.collectList.some(item=>item.collectTitle===obj.title)){
+    return res.json(response(1,'','该收藏夹已存在'))
+  }
+  req._user.collectList.push({
+    'collectTitle':obj.title,
+    'collectType':obj.type,
+    'collectDesc':obj.desc
+  })
+  await req._user.save()
+  return res.json(response(0,'','创建成功'))
+}
 
 module.exports = {
   register,
@@ -293,5 +318,7 @@ module.exports = {
   uploadAvatar,
   getIP,
   subscription,
-  push
+  push,
+  collect,
+  createCollect
 }

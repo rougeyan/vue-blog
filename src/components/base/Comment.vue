@@ -42,6 +42,11 @@
         </div>
       </div>
     </div>
+    <!--收藏弹窗-->
+    <Collect :visible="collectDialogVisible"
+             @close="closeCollect"
+    ></Collect>
+
   </div>
 </template>
 
@@ -49,8 +54,13 @@
 import api from '../../service/apiManage'
 import ClipboardJS from 'clipboard'
 import {mapGetters, mapActions} from 'vuex'
+import Collect from './Collect'
+
 export default {
   name: 'comment',
+  components:{
+    Collect,
+  },
   props: {
     commentList: {
       type: Array,
@@ -78,7 +88,8 @@ export default {
     return {
       textarea: '',
       showBtnGroup: window.innerWidth < 950,
-      showLoading: false
+      showLoading: false,
+      collectDialogVisible:false,
     }
   },
   computed: {
@@ -109,7 +120,10 @@ export default {
       })
     },
     collect () {
-      this.$message.info('还没写啊:(')
+      this.collectDialogVisible = true
+    },
+    closeCollect(){
+      this.collectDialogVisible = false
     },
     like () {
       if (this.user === this.currentUser) {

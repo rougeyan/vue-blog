@@ -80,6 +80,20 @@ const mutations = {
   [types.SET_LIKELIST](state,data){
     state.users.likeList = data
   },
+  [types.SET_COLLECTLIST](state,data){
+    state.users.collectList = data
+  },
+  [types.ADD_COLLECTLIST](state,data){
+    state.users.collectList.push(data)
+  },
+  [types.ADD_BLOG_TO_COLLECT](state,data){
+    let index = state.users.collectList.findIndex(item=>item.collectTitle===data.collect)
+    console.log(index)
+    state.users.collectList[index].list.push({
+        author:data.author,
+        blogDate:data.blogDate,
+      })
+  },
   [types.SET_AVATAR](state,data){
     state.users.avatar = data
   },

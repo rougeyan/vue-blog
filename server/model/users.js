@@ -14,6 +14,15 @@ let userSchema = new mongoose.Schema({
     "blogDate":String,
     "blogTitle":String
   }],
+  "collectList":[{
+    "collectTitle":String,
+    "collectType":String,
+    "collectDesc":String,
+    "list":[{
+      "author":String,
+      "blogDate":String
+    }]
+  }],
   "blogList":[{
     "blogTitle":String,
     "blogDate":String,

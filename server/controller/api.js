@@ -64,7 +64,6 @@ async function analyzeBlogDate(req,res){
   return res.json(rsp(0,data,''))
 }
 
-analyzeBlogDate('','')
 function recordApi(url,method){
   if(/^\/api/.test(url)){
     let el = [url.split('?')[0],method].join('-')

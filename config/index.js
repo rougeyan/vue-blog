@@ -12,11 +12,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api/*':{
-        target:'https://blog.calabash.top',
+        target:'http://127.0.0.1:3000',
         changeOrigin:true
       },
       '/chat/*':{
-        target:'https://blog.calabash.top',
+        target:'http://127.0.0.1:3000/',
         changeOrigin:true
       }
     },
