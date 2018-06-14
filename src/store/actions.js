@@ -179,3 +179,22 @@ export const addToCollectList = function({commit,state},data){
     }
   })
 }
+//删除某个收藏夹
+export const deleteCollect = function({commit,state},data){
+  apiManage.deleteCollectList(data).then(res=>{
+    if(res.errno===0){
+      commit(types.DELETE_COLLECT,data)
+    }
+    if(res.msg==='收藏夹不存在'){
+      commit(types.DELETE_COLLECT,data)
+    }
+  })
+}
+//删除某个收藏夹中的文章
+export const deleteCollectBlog = function({commit,state},data){
+  apiManage.deleteCollectBlog(data).then(res=>{
+    if(res.errno===0){
+      commit(types.DELETE_COLLECT_BLOG,data)
+    }
+  })
+}

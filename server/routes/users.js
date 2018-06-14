@@ -56,6 +56,11 @@ router.post('/push',blogController.push)
 router.post('/collect',blogController.collect)
 //创建收藏夹
 router.post('/collectList',blogController.createCollect)
+//删除收藏夹
+router.delete('/collectList',blogController.deleteCollect)
+//删除收藏夹中某个博客
+router.delete('/collect',blogController.deleteCollectBlog)
+
 module.exports = {
   users:router
 };

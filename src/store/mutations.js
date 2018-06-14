@@ -94,6 +94,19 @@ const mutations = {
         blogDate:data.blogDate,
       })
   },
+  [types.DELETE_COLLECT](state,data){
+    let index = state.users.collectList.findIndex(item=>item.collectTitle===data.collectTitle)
+    if(index !== -1){
+      state.users.collectList.splice(index,1)
+    }
+  },
+  [types.DELETE_COLLECT_BLOG](state,data){
+    let index = state.users.collectList.findIndex(item=>item.collectTitle===data.collectTitle)
+    if(index !== -1){
+      let i = state.users.collectList[index].list.findIndex(item=>item.blogDate===data.blogDate)
+      state.users.collectList[index].list.splice(i,1)
+    }
+  },
   [types.SET_AVATAR](state,data){
     state.users.avatar = data
   },

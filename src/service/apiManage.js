@@ -92,8 +92,12 @@ class apiManage extends BaseModule {
     return this.post('v1/collectList',obj,config)
   }
   //删除收藏夹
-  deleteCollectList(obj,config){
-    return this.delete('v1/collectList',obj,config)
+  deleteCollectList(obj){
+    return this.delete('v1/collectList',{data:obj})
+  }
+  //删除收藏夹中的某个文章
+  deleteCollectBlog(obj){
+    return this.delete('v1/collect',{data:obj})
   }
   //收藏
   collectBlog(obj,config){

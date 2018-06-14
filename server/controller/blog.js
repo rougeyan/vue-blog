@@ -298,7 +298,34 @@ async function createCollect(req,res){
   await req._user.save()
   return res.json(response(0,'','创建成功'))
 }
+//删除收藏夹
+async function deleteCollect(req,res){
+  let index = req._user.collectList.findIndex(item=>item.collectTitle===req.body.collectTitle)
+  if(index !== -1){
+    req._user.collectList.splice(index,1)
+    await req._user.save()
+    return res.json(response(0,'','删除成功'))
+  }else{
+    return res.json(response(1,'','收藏夹不存在'))
+  }
+}
+//删除收藏夹中某个文章
+async function deleteCollectBlog(req,res){
+  let index = req._user.collectList.findIndex(item=>item.collectTitle===req.body.collectTitle)
+  if(index !== -1){
+    let i = req._user.collectList[index].list.findIndex(item=>item.blogDate===req.body.blogDate && item.author===req.body.author)
+    if(i !== -1){
+      req._user.collectList[index].list.splice(i,1)
+      await req._user.save()
+      return res.json(response(0,'','删除成功'))
+    }else{
+      return res.json(response(1,'','收藏夹中不存在该文章'))
+    }
 
+  }else{
+    return res.json(response(1,'','收藏夹不存在'))
+  }
+}
 module.exports = {
   register,
   login,
@@ -320,5 +347,7 @@ module.exports = {
   subscription,
   push,
   collect,
-  createCollect
+  createCollect,
+  deleteCollect,
+  deleteCollectBlog
 }

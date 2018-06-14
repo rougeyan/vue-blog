@@ -1,8 +1,8 @@
 <template>
   <div class="manage-right">
     <el-tabs v-model="activeName2" type="border-card" >
-      <!--我的动态区域-->
-      <el-tab-pane label="我的动态" name="first">
+      <!--我喜欢的区域-->
+      <el-tab-pane label="我喜欢的" name="first">
         <el-table
           :data="likeList"
           style="width: 100%">
@@ -39,8 +39,57 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
+      <!--我收藏的区域-->
+      <el-tab-pane label="我收藏的" name="secont">
+        <el-table
+          :data="collectList"
+          style="width: 100%">
+          <!--移动端表格-->
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-table :data="scope.row.list">
+                <el-table-column
+                  label="作者"
+                  prop="author">
+                </el-table-column>
+                <el-table-column
+                  label="文章编号"
+                  prop="blogDate">
+                </el-table-column>
+                <el-table-column
+                  label="操作">
+                  <template slot-scope="scope1">
+                    <el-button type="plain" @click="$router.push(`/${scope1.row.author}/articles/${scope1.row.blogDate}`)">查看</el-button>
+                    <el-button type="danger" @click="_deleteCollectBlog(scope.row,scope1.row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="collectTitle"
+            label="收藏夹名称"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="collectDesc"
+            label="收藏夹描述"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="collectType"
+            label="类型">
+          </el-table-column>
+          <el-table-column
+            label="操作">
+            <template slot-scope="scope">
+              <el-button type="danger" @click="_deleteCollect(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
       <!--个人信息区域-->
-      <el-tab-pane label="个人信息" name="second">
+      <el-tab-pane label="个人信息" name="third">
         <el-form label-position="left" label-width="80px">
           <el-form-item label="Twitter">
             <el-input v-model="userInfo.twitter" class="input">
@@ -74,7 +123,7 @@
         </el-form>
       </el-tab-pane>
       <!--个性化设置区域-->
-      <el-tab-pane label="个性化" name="third">
+      <el-tab-pane label="个性化" name="four">
         <el-form>
           <el-form-item label="canvas线条颜色">
             <el-color-picker v-model="color1" color-format="rgb" @change="changeCanvasColor"></el-color-picker>
@@ -108,6 +157,7 @@ export default{
       'avatar',
       'token',
       'likeList',
+      'collectList',
       'lineColor'
     ])
   },
@@ -118,7 +168,9 @@ export default{
     ...mapActions([
       'updateUserInfo',
       'setAvatar',
-      'likethis'
+      'likethis',
+      'deleteCollect',
+      'deleteCollectBlog'
     ]),
     ...mapMutations([
       'SET_AVATAR',
@@ -166,6 +218,20 @@ export default{
         blogTitle:obj.blogTitle,
         userName: obj.author,
         user: this.userName,
+      })
+    },
+    _deleteCollect(obj){
+      this.deleteCollect({
+        userName:this.userName,
+        collectTitle:obj.collectTitle
+      })
+    },
+    _deleteCollectBlog(obj,obj1){
+       this.deleteCollectBlog({
+        blogDate: obj1.blogDate,
+        collectTitle:obj.collectTitle,
+        author: obj1.author,
+        userName: this.userName,
       })
     },
     changeCanvasColor(){
