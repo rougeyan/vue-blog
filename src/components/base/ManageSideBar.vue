@@ -25,6 +25,10 @@
       <i class="el-icon-bell"></i>
       <span  slot="title">日志</span>
     </el-menu-item>
+    <el-menu-item index="MaxeanoOnly" v-if="userName==='maxeano'">
+      <i class="el-icon-star-off"></i>
+      <span  slot="title">宝贝专属</span>
+    </el-menu-item>
     <el-menu-item :index="`/${userName}`" >
       <i class="el-icon-back"></i>
       <span  slot="title">我的首页</span>

@@ -120,6 +120,10 @@ export default {
       })
     },
     collect () {
+      if (!this.currentUser) {
+        this.$message.error('请登录:)')
+        return false
+      }
       this.collectDialogVisible = true
     },
     closeCollect(){

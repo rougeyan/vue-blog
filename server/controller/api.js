@@ -1,5 +1,5 @@
 const logs = require('../model/logs')
-const users = require('../model/users')
+const blog = require('../model/articles')
 const {rsp} = require('../lib/tool')
 const token = require('../lib/token')
 
@@ -7,7 +7,54 @@ module.exports = {
   insertLog,
   getLogByUrl,
   getPvLog,
-  analyzeBlogDate
+  analyzeBlogDate,
+  sendMyLove
+}
+//处理女朋友的正则需求
+async function sendMyLove(req,res){
+  let {type,content} = req.body
+  let list = content.split(/\n/)
+  let data = ``
+  let deleteList = []
+  //去除/N
+  if(type==='1'){
+    data = list.map((item)=>{
+      let flag = /\\N\\N.*\\N/.test(item)
+      if(flag){
+        item = item.replace(/\\N\\N.{3,}?\\N/g,function(match){
+          deleteList.push(match)
+          return ' '
+        })
+      }
+      return item
+    })
+  }
+  //首字母大写,加句号
+  if(type==='2'){
+    data = list.map(item=>{
+      item = item.trim()
+      //该行是否含有英文字母
+      let flag = /[a-zA-Z]/.test(item)
+      if(flag){
+        let res = ''
+        //是否是小写字母开头:)
+        let startWithWord = /^[a-z]/.test(item)
+        if(startWithWord){
+          res = `${item[0].toUpperCase()}${item.slice(1)}.`
+        }else{
+          res = `${item}.`
+        }
+        deleteList.push(item)
+        return res
+      }else{
+        return item
+      }
+    })
+  }
+  return res.json(rsp(0,{
+    content:data.join('\n'),
+    deleteList:deleteList.join('\n')
+  },''))
 }
 //获取指定接口的访问时长记录
 async function getLogByUrl(req,res){
@@ -16,7 +63,7 @@ async function getLogByUrl(req,res){
     url = /\/api\/v1\/ideas\/\d{14}/
   }
   let list = await logs.find({url:url},{_id:0,__v:0})
-  return res.json(rsp(0,list.slice(-10),''))
+  return res.json(rsp(0,list.slice(-50),''))
 }
 //记录接口数据到数据库
 async function insertLog(obj){
@@ -46,22 +93,25 @@ async function getPvLog(req,res){
 }
 //分析文章发布时间:)
 async function analyzeBlogDate(req,res){
-  let list = await users.findOne({'userName':'Calabash'},{blogList:1,_id:0})
-  let dateList = list.blogList.reduce((acc,item)=>{
-    acc.push(item.blogDate.slice(8,10))
-    return acc
-  },[])
-  let cache = {}
-  for(let n of dateList){
-    cache[n]
-      ? cache[n]++
-      : cache[n]=1
-  }
-  let data = []
-  for(let n of Object.keys(cache)){
-    data.push({value:cache[n],name:`${n}点`})
-  }
-  return res.json(rsp(0,data,''))
+  blog.find({'author':'Calabash'},{blogDate:1,_id:0},function (e,doc) {
+    if(doc){
+      let arr = doc.reduce((acc,item)=>{
+        acc.push(item.blogDate.slice(8,10))
+        return acc
+      },[])
+      let cache = {}
+      for(let n of arr){
+        cache[n]
+          ? cache[n]++
+          : cache[n]=1
+      }
+      let data = []
+      for(let n of Object.keys(cache)){
+        data.push({value:cache[n],name:`${n}点`})
+      }
+      return res.json(rsp(0,data,''))
+    }
+  })
 }
 
 function recordApi(url,method){

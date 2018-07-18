@@ -9,8 +9,9 @@
   ],
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
+    "dev-online": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev-local": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js ",
+    "start": "npm run dev-online",
     "build": "node build/build.js",
     "upload": "node build/upload.js"
   },

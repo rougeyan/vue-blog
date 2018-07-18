@@ -131,5 +131,9 @@ class apiManage extends BaseModule {
   getAnalayzBlogDate(obj,config){
     return this.get('v3/analyzeBlogDate',obj,config)
   }
+  //女朋友专区
+  sendMyLove(obj,config){
+    return this.post('v3/sendMyLove',obj,config)
+  }
 }
 export default new apiManage()

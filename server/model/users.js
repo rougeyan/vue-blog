@@ -23,21 +23,6 @@ let userSchema = new mongoose.Schema({
       "blogDate":String
     }]
   }],
-  "blogList":[{
-    "blogTitle":String,
-    "blogDate":String,
-    "blogContent":String,
-    "blogType":String,
-    "likeCount":{
-      type:Number,
-      default:0
-    },
-    "comment":[{
-      "user":String,
-      "date":String,
-      "text":String
-    }]
-  }]
 })
 
 module.exports = mongoose.model('user',userSchema)

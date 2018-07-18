@@ -60,37 +60,8 @@ async function validateToken(req, res, next) {
     next()
   }
 }
-//查找当前用户
-async function getUser(req,res,next){
-  const noValidUser = [
-    '/api',
-    '/checkStatus',
-    '/logout',
-    '/register',
-    '/login',
-    '/files',
-    '/pv',
-    '/subscription',
-    '/push'
-  ]
-  if(!noValidUser.includes(req.path)){
-    let userName = req.body.userName || req.query.userName || req.headers['username']
-    let user = await users.findOne({'userName':userName})
-    if(user){
-      req._user = user
-      req._userObj = user.toObject()
-      next()
-    }else{
-      return res.json(response(1,'','没有该用户'))
-    }
-  }else{
-    next()
-  }
-}
-
 module.exports = {
   cors,
-  getUser,
   validateToken,
   collectIP
 }

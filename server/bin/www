@@ -13,27 +13,6 @@ const cluster = require('cluster');
  * Get port from environment and store in Express.
  */
 
-/*if(cluster.isMaster){
-  // Count the machine's CPUs
-  let cpuCount = require('os').cpus().length;
-  // Create a worker for each CPU
-  for (let i = 0; i < cpuCount; i += 1) {
-    cluster.fork();
-  }
-  // Listen for dying workers
-  cluster.on('exit', function (worker) {
-    // Replace the dead worker, we're not sentimental
-    console.log('Worker %d died :(', worker.id);
-    cluster.fork();
-  });
-}else{
-  console.log('[worker] ' + "start worker ..." + cluster.worker.id);
-  const port = normalizePort(process.env.PORT || '3000');
-  app.set('port', port);
-  const server = http.createServer(app).listen(3000);
-  server.on('error', onError);
-  server.on('listening', onListening);
-}*/
 
 
 /**

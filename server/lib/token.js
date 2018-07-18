@@ -2,7 +2,7 @@ const redis = require('../redis/index')
 const jwt = require('jsonwebtoken')
 const SECRET ='CalabashBlog'
 
-const token = {
+const redisTool = {
   //生成并设置token
   sign(user){
     let token = jwt.sign({user:user}, SECRET)
@@ -10,6 +10,7 @@ const token = {
     redis.expire(user,3600)
     return token
   },
+  //更新user的token过期时间
   _update(user){
     redis.expire(user,3600)
   },
@@ -56,6 +57,6 @@ const token = {
   }
 }
 
-module.exports = token
+module.exports = redisTool
 
 
