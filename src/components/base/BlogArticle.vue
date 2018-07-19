@@ -9,13 +9,13 @@
       <div v-html="compiledMarkdown" class="markdown-body" @click="scaleImg($event)"></div>
       <!--评论区域-->
       <Comment
-        :commentList="idea.comment"
+        :commentList="commentList"
         :blogDate="idea.blogDate"
         :user="user"
         :currentUser="userName"
         :blogTitle="idea.blogTitle"
         :likeCount.sync="idea.likeCount"
-        @commitSuccess="_getIdea"
+        @commitSuccess="getComment"
       >
       </Comment>
     </div>
@@ -36,6 +36,7 @@
 import { mapActions, mapGetters} from 'vuex'
 import {formatDateEng} from '../../lib/lib'
 import Comment from './Comment.vue'
+import api from '../../service/apiManage'
 export default{
   props: ['id', 'user', 'currentBlogList'],
   components: {
@@ -68,6 +69,9 @@ export default{
   created () {
     this._getIdea()
   },
+  mounted(){
+    this.getComment()
+  },
   methods: {
     ...mapActions([
       'getCurrentBlogList',
@@ -77,6 +81,13 @@ export default{
       this.fullScreenLoading = true
       this.getIdea({userName: this.user, blogDate: this.id}).then(res=>{
         this.fullScreenLoading = false
+      })
+    },
+    getComment(){
+      api.getComment({blogDate:this.id,userName:this.user}).then(res=>{
+        if(res.errno===0){
+          this.commentList = res.res
+        }
       })
     },
     hasSiblings (arr) {

@@ -1,12 +1,12 @@
 const token = require('../lib/token')
-const users = require('../model/users')
 const {response} = require('../lib/tool')
+
 //允许跨域
 function cors(req,res,next){
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header('Access-Control-Allow-Credentials','true');   // 新增
+  res.header('Access-Control-Allow-Credentials','true');
   next()
 }
 //记录ip
@@ -38,7 +38,7 @@ async function validateToken(req, res, next) {
     'GET/pv',
     'POST/comment',
     'POST/like',
-    'POST/avatar'
+    'POST/avatar',
   ]
   if(validToken.includes(req.method+req.path)){
     let tok = req.headers['authorization'] || req.body.token || '',
@@ -60,6 +60,7 @@ async function validateToken(req, res, next) {
     next()
   }
 }
+
 module.exports = {
   cors,
   validateToken,

@@ -3,7 +3,6 @@ const users = require('../model/users')
 //获取用户某个属性
 async function getUserProp(user,key){
   let doc = await users.findOne({'userName':user},{[key]:1,_id:0})
-  console.log(doc)
   if(doc && doc[key]){
     return doc[key]
   }

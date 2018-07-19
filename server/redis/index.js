@@ -4,9 +4,9 @@ const updateNginx = require('../lib/check').updateNginxConf
 
 redis.on("connect", function () {
   console.log('连接redis成功');
-  /*  updateNginx().then(res=>{
-      console.log('更新结果'+res)
-    })*/
+  updateNginx().then(res=>{
+    console.log('重启了Nginx')
+  })
 });
 
 redis.on("error", function (error) {

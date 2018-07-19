@@ -49,7 +49,6 @@ async function getBlog(req,res){
       userName = req.query.userName
   let list = await blog.find({"author":userName})
   let index = list.findIndex((item)=>item.blogDate===blogDate)
-  console.log(index)
   //获取上一篇/下一篇的编号
   let {_id,blogType,...filterObj} = Object.assign(list[index].toObject(),{
     lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
