@@ -3,6 +3,7 @@ const blog = require('../model/articles')
 const users = require("../model/users")
 const pushMessage = require('../webpush/index')
 const {response,getUserProp} = require('../lib/tool')
+const filter = require("../lib/filter")
 
 //发布博客
 async function createBlog(req,res){
@@ -79,6 +80,9 @@ async function getBlogList(req,res) {
 //发布评论
 async function postComment(req,res){
   let {blogDate,userName,...commentBody} = req.body
+  if (filter.filter(commentBody.text)){
+    return res.json(response(1,"","含有敏感词"))
+  }
   blog.update({"blogDate":blogDate},{$push:{comment:commentBody}},function (err) {
     if(err){
       return res.json(response(1,'','评论失败'))
@@ -152,6 +156,7 @@ async function subscription(req,res){
   redisTool.saveSubscription('subscription',value)
   return res.json(response(0,'',''))
 }
+
 
 module.exports = {
   createBlog,
