@@ -69,9 +69,6 @@ export default{
   created () {
     this._getIdea()
   },
-  mounted(){
-    this.getComment()
-  },
   methods: {
     ...mapActions([
       'getCurrentBlogList',
@@ -82,6 +79,7 @@ export default{
       this.getIdea({userName: this.user, blogDate: this.id}).then(res=>{
         this.fullScreenLoading = false
       })
+      this.getComment()
     },
     getComment(){
       api.getComment({blogDate:this.id,userName:this.user}).then(res=>{
