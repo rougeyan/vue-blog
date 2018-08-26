@@ -74,6 +74,6 @@ function filterSensitiveWord(txt) {
 }
 
 module.exports = {
-  filter:filterSensitiveWord
+  _filter:filterSensitiveWord
 }
 

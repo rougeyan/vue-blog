@@ -13,11 +13,20 @@ async function createBlog(req,res){
     'blogDate':req.body.blogDate,
     'blogType':req.body.blogType,
     'author' : req.body.userName
-  },function (err){
+  },async function (err){
     if(err){
       return res.json(response(1,'','发布失败'))
     }
-    return res.json(response(0,'','发布成功'))
+    res.json(response(0,'','发布成功'))
+    if(req.body.userName ==='Calabash' || 'Maxeano' || 'maxeano'){
+      await sendNotification({
+        title:'新消息',
+        body:`${req.body.userName}发布了新的文章 ${req.body.blogTitle}`,
+        icon:'/calabash24.png'
+      })
+      return
+    }
+
   })
 }
 //删除博客
@@ -50,6 +59,9 @@ async function getBlog(req,res){
       userName = req.query.userName
   let list = await blog.find({"author":userName})
   let index = list.findIndex((item)=>item.blogDate===blogDate)
+  if(index === -1){
+    return res.json(response(1,'','文章不存在'))
+  }
   //获取上一篇/下一篇的编号
   let {_id,blogType,...filterObj} = Object.assign(list[index].toObject(),{
     lastBlogDate:list[index-1]?list[index-1].blogDate:'0',
@@ -61,9 +73,7 @@ async function getBlog(req,res){
   }else{
     filterObj.count = await redisTool._getValue(blogDate)
   }
-  return filterObj.blogDate
-    ? res.json(response(0,filterObj,''))
-    : res.json(response(1,'','文章不存在'))
+  return res.json(response(0,filterObj,''))
 }
 //获取博客列表
 async function getBlogList(req,res) {
@@ -80,7 +90,7 @@ async function getBlogList(req,res) {
 //发布评论
 async function postComment(req,res){
   let {blogDate,userName,...commentBody} = req.body
-  if (filter.filter(commentBody.text)){
+  if (filter._filter(commentBody.text).flag){
     return res.json(response(1,"","含有敏感词"))
   }
   blog.update({"blogDate":blogDate},{$push:{comment:commentBody}},function (err) {
@@ -143,8 +153,12 @@ async function likeBlog(req,res){
 //遍历推送
 async function sendNotification(data){
   let list = await redisTool.getSubscription('subscription')
+  let arr = []
   for(let n of list){
-    let res = await pushMessage(n,JSON.stringify(data))
+    arr.push(pushMessage(n,JSON.stringify(data)))
+  }
+  let result = await Promise.all(arr)
+  for(let res of result){
     if(typeof res === 'string'){
       redisTool.removeSubscription(res)
     }
